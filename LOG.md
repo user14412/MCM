@@ -1,11 +1,81 @@
 # git&项目创建
 
-[EOC]
+[TOC]
 
-## 项目架构设计
+Digital Marine Culture Museum
+
+## 1、项目架构设计
 
 ![image-20250321191026666](C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20250321191026666.png)
 
-## 创建git仓库
+## 2、创建git仓库
 
-## 创建springboot项目
+**本地**
+
+```
+ssh-keygen #生成密钥
+cd .ssh/
+cat id_rsa.pub
+git init # 创建.git文件夹
+```
+
+**云端**
+
+```
+复制公钥到ssh设置里
+创建云端仓库
+```
+
+**本地**
+
+```
+ git config user.name "Yan Zan"
+ git config user.email "zanyan2004@163.com"
+ git remote add origin git@github.com:user14412/MCM.git
+ git push -u origin master
+```
+
+> 如果报错：ssh: connect to host github.com port 22: Connection refused fatal: Could not read from remote repository. 可以去config里把github的ssh端口改成443。
+
+## 3、创建springboot项目
+
+
+
+## 4、创建前端
+
+安装node.js 16.15.1 LTS
+
+安装@vue/cli 
+
+启动vue ui
+
+创建项目/MCM/web/
+
+**安装插件vue-router**
+
+> Vue Router 是 Vue.js 官方提供的路由管理插件，主要用于构建单页面应用（SPA），通过 URL 的变化实现页面间的无刷新切换。
+
+**安装插件vuex**
+
+> 在 Vuex 中，`store` 是一个包含应用全局状态的对象，它通过 `state` 存储数据，通过 `mutations`、`actions` 和 `getters` 来管理和操作这些数据。`useStore` 是 Vuex 提供的一个方法，用于在 Vue 组件中访问 `store` 实例。
+
+**安装依赖jquery**
+
+> jQuery 依赖的典型应用包括简化 DOM 操作、事件处理和 Ajax 请求，例如通过 `$('#element')` 快速选择元素并修改其内容或样式。它常与 Bootstrap 等前端框架结合，用于实现动态交互效果，如模态框和表单验证。此外，jQuery 的 **Ajax 功能支持无刷新页面更新**，例如通过 `$.ajax()` 动态加载数据或提交表单。
+
+**安装依赖bootstrap**
+
+> Bootstrap 依赖的典型应用包括快速构建响应式网页，通过其栅格系统和预定义组件（如导航栏、按钮、表单等）实现跨设备的兼容性。它常用于开发企业网站、电商平台和管理后台，提供一致且美观的用户界面。此外，Bootstrap 的 JavaScript 插件（如模态框、轮播图）增强了页面的交互性，适用于快速原型开发和小型到中型项目。
+
+## 安装工具
+
+### 安装visio
+
+
+
+
+
+
+
+
+
