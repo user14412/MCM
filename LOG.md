@@ -6,6 +6,14 @@ Digital Marine Culture Museum
 
 ## 1、项目架构设计
 
+参考：
+
+[国家海洋博物馆官网](https://www.nmmc.cc/active/index)
+
+[国家海洋博物馆720°全景展厅](https://www.nmmc.cc/uploadfiles/360data/longdeshidai/?scene_id=45968320)
+
+[国家海洋博物馆360°展品](https://www.nmmc.cc/collection?state=zixun)
+
 ![image-20250321191026666](C:\Users\华为\AppData\Roaming\Typora\typora-user-images\image-20250321191026666.png)
 
 ## 2、创建git仓库
@@ -66,6 +74,8 @@ git init # 创建.git文件夹
 **安装依赖bootstrap**
 
 > Bootstrap 依赖的典型应用包括快速构建响应式网页，通过其栅格系统和预定义组件（如导航栏、按钮、表单等）实现跨设备的兼容性。它常用于开发企业网站、电商平台和管理后台，提供一致且美观的用户界面。此外，Bootstrap 的 JavaScript 插件（如模态框、轮播图）增强了页面的交互性，适用于快速原型开发和小型到中型项目。
+
+public文件夹下的index.html不能删
 
 ## 安装工具
 
