@@ -1,7 +1,7 @@
 <template>
   <div id="app" class="d-flex flex-column min-vh-100">
     <NavBar />
-    <main class="flex-grow-1">
+    <main class="flex-grow-1" style="padding-top: 56px;">
       <router-view />
     </main>
     <FooterComponent />

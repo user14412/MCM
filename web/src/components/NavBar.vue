@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
     <div class="container">
        <!-- 换掉实现切换页面不刷新(其实是一个页面) -->
       <router-link class="navbar-brand" :to="{name: 'home'}">MCM</router-link>
@@ -8,12 +8,16 @@
           <li class="nav-item">
             <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">本馆概况</router-link>
           </li>
-          <!-- <li class="nav-item">
-            <router-link :class="route_name == 'record_index' ? 'nav-link active':'nav-link'" :to="{name: 'record_index'}">对局记录</router-link>
+          <li class="nav-item">
+            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">全景参观</router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="route_name == 'ranklist_index' ? 'nav-link active':'nav-link'" :to="{name: 'ranklist_index'}">排行榜</router-link>
-          </li> -->
+            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">馆藏展品</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">问卷反馈</router-link>
+          </li>
+          
         </ul>
         <ul class="navbar-nav" v-if="$store.state.user.is_login">
           <li class="nav-item dropdown">
@@ -72,4 +76,7 @@ export default{
 </script>
 
 <style scoped>
+.navbar {
+  z-index: 1000; /* 确保导航栏在其他内容之上 */
+}
 </style>

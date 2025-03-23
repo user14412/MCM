@@ -1,16 +1,18 @@
 <template>
   <ContentField>
-    本馆概况
+      <ArticleView />
   </ContentField>
 </template>
 
 <script>
 import ContentField from "../../components/ContentField.vue"
+import ArticleView from "@/components/ArticleView.vue";
 
 export default{
   components :{
-    ContentField
-  }
+    ContentField,
+    ArticleView,
+  },
 }
 </script>
  

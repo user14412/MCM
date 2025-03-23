@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer bg-body-tertiary mt-auto py-3">
+  <footer class="footer bg-body-tertiary mt-auto py-3" style="margin-top: 56px;">
     <div class="container">
       <div class="row">
         <div class="col-md-4 text-center text-md-start">
