@@ -1,25 +1,27 @@
 <template>
-  <NavBar></NavBar>
-  <router-view></router-view>
+  <div id="app" class="d-flex flex-column min-vh-100">
+    <NavBar />
+    <main class="flex-grow-1">
+      <router-view />
+    </main>
+    <FooterComponent />
+  </div>
 </template>
 
 <script>
-
-import NavBar from "@/components/NavBar.vue";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap"
-// import $ from 'jquery'
-// import { useStore } from "vuex";
+import NavBar from "./components/NavBar.vue";
+import FooterComponent from './components/FooterComponent.vue';
+
 
 export default {
-  components:{
-    NavBar
+  name: 'App',
+  components: {
+    NavBar,
+    FooterComponent,
   },
-  setup() {
-    // const store = useStore();
-    // store.commit("logout")
-  }
-}
+};
 </script>
 
 <style>
