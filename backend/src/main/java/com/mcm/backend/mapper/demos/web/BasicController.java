@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mcm.backend.demos.web;
+package com.mcm.backend.mapper.demos.web;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;

@@ -3,6 +3,8 @@ import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vu
 import NotFound from '@/views/error/NotFound.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import UserProfileIndexView from '@/views/user/profile/UserProfileIndexView.vue'
+import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
+import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
 
 const routes = [
   // 重定向
@@ -15,22 +17,50 @@ const routes = [
   {
     path: "/home/",
     name: "home_index",
-    component: HomeIndexView
+    component: HomeIndexView,
+    meta: {
+      requestAuth: true,
+    },
   },
   {
     path: "/introduction/",
     name: "introduction_index",
     component: IntroductionIndexView,
+    meta: {
+      requestAuth: true,
+    },
   },
   {
     path: "/user/profile/",
     name: "user_profile_index",
     component: UserProfileIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/user/account/login/",
+    name: "user_account_login",
+    component: UserAccountLoginView,
+    meta: {
+      requestAuth: false,
+    },
+  },
+  {
+    path: "/user/account/register/",
+    name: "user_account_register",
+    component: UserAccountRegisterView,
+    meta: {
+      requestAuth: false,
+    },
   },
   {
     path: "/404/",
     name: "404",
     component: NotFound,
+    meta: {
+      requestAuth: false,
+    },
   },
   // 错误处理
   {
@@ -43,5 +73,17 @@ const router = createRouter({
   history: createWebHistory(),
   routes
 })
+
+// 添加路由守卫：
+router.beforeEach((to, from, next) => {
+  const store = require('@/store').default; // 避免循环引入
+  // 如果需要授权&&未登录，跳转到登录页面
+  if (to.meta.requestAuth && !store.state.user.is_login) {
+    next({ name: "user_account_login" });
+  } else {
+    // 不需要授权||已登录直接打开原页面
+    next();
+  }
+});
 
 export default router

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.mcm.backend.demos.web;
+package com.mcm.backend.mapper.demos.web;
 
 /**
  * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
