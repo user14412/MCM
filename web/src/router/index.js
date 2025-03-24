@@ -1,10 +1,11 @@
 import HomeIndexView from '@/views/home/HomeIndexView.vue'
-import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vue'
+// import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vue'
 import NotFound from '@/views/error/NotFound.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import UserProfileIndexView from '@/views/user/profile/UserProfileIndexView.vue'
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
+import ArticleIndexView from '@/views/introduction/ArticleIndexView.vue'
 
 const routes = [
   // 重定向
@@ -22,10 +23,24 @@ const routes = [
       requestAuth: true,
     },
   },
+  // {
+  //   path: "/introduction/",
+  //   name: "introduction_index",
+  //   component: IntroductionIndexView,
+  //   meta: {
+  //     requestAuth: true,
+  //   },
+  // },
   {
     path: "/introduction/",
     name: "introduction_index",
-    component: IntroductionIndexView,
+    redirect: "/article/3/"
+  },
+  {
+    // 根据文章ID获取文章详情页面
+    path: "/article/:articleId/",
+    name: "article_index",
+    component: ArticleIndexView,
     meta: {
       requestAuth: true,
     },
@@ -79,8 +94,10 @@ router.beforeEach((to, from, next) => {
   const store = require('@/store').default; // 避免循环引入
   // 如果需要授权&&未登录，跳转到登录页面
   if (to.meta.requestAuth && !store.state.user.is_login) {
+    console.log("fail")
     next({ name: "user_account_login" });
   } else {
+    console.log("success")
     // 不需要授权||已登录直接打开原页面
     next();
   }

@@ -15,6 +15,22 @@ import $ from 'jquery';
 import { useStore } from 'vuex';
 
 export default {
+  props: {
+    articleId: {
+      type: Number,
+      required: true,
+    }
+  },
+  watch: {
+    articleId: {
+      immediate: true,
+      handler(newVal){
+        if(newVal){
+          this.fetchArticle();
+        }
+      }
+    }
+  },
   data() {
     return {
       article: {
@@ -37,7 +53,7 @@ export default {
         url: "http://127.0.0.1:3000/article/get/",
         type: "GET",
         data: {
-          ArticleId: 3,
+          ArticleId: this.articleId,
         },
         headers: {
           Authorization: "Bearer " + store.state.user.token,
@@ -58,16 +74,16 @@ export default {
       })
     },
     formatDate(date) {
-    if (!date) return '';
-    return new Date(date).toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  }
+      if (!date) return '';
+      return new Date(date).toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+    }
   },
 };
 </script>
