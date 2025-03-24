@@ -28,7 +28,7 @@ public class GetArticleServiceImpl implements GetArticleService {
             map.put("content", article.getContent());
             map.put("createtime", article.getCreatetime().toString());
         }
-        System.out.println("resp返回：" + map);
+        System.out.println("resp返回：" + map.get("title"));
         return map;
     }
 }

@@ -1,11 +1,12 @@
 import HomeIndexView from '@/views/home/HomeIndexView.vue'
-// import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vue'
 import NotFound from '@/views/error/NotFound.vue'
 import { createRouter, createWebHistory } from 'vue-router'
 import UserProfileIndexView from '@/views/user/profile/UserProfileIndexView.vue'
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
-import ArticleIndexView from '@/views/introduction/ArticleIndexView.vue'
+import NewsIndexView from '@/views/introduction/NewsIndexView.vue'
+import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vue'
+import VisitGuideIndexView from '@/views/introduction/VisitGuideIndexView.vue'
 
 const routes = [
   // 重定向
@@ -23,24 +24,26 @@ const routes = [
       requestAuth: true,
     },
   },
-  // {
-  //   path: "/introduction/",
-  //   name: "introduction_index",
-  //   component: IntroductionIndexView,
-  //   meta: {
-  //     requestAuth: true,
-  //   },
-  // },
   {
     path: "/introduction/",
     name: "introduction_index",
-    redirect: "/article/3/"
+    component: IntroductionIndexView,
+    meta: {
+      requestAuth: true,
+    },
   },
   {
-    // 根据文章ID获取文章详情页面
-    path: "/article/:articleId/",
-    name: "article_index",
-    component: ArticleIndexView,
+    path: "/news/",
+    name: "news_index",
+    component: NewsIndexView,
+    meta: {
+      requestAuth: true,
+    }
+  },
+  {
+    path: "/guide/",
+    name: "visit_guide_index",
+    component: VisitGuideIndexView,
     meta: {
       requestAuth: true,
     },
@@ -95,6 +98,7 @@ router.beforeEach((to, from, next) => {
   // 如果需要授权&&未登录，跳转到登录页面
   if (to.meta.requestAuth && !store.state.user.is_login) {
     console.log("fail")
+    console.log(store.state.user.is_login);
     next({ name: "user_account_login" });
   } else {
     console.log("success")

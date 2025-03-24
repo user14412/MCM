@@ -11,6 +11,8 @@
 </template>
 
 <script>
+// 组件：根据文章id显示文章内容
+// 参数：articleId
 import $ from 'jquery';
 import { useStore } from 'vuex';
 

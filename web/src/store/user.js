@@ -72,7 +72,7 @@ export default {
                     Authorization: "Bearer " + context.state.token,
                 },
                 success(resp) {
-                    // console.log("getinfo 响应数据:", resp); // 打印响应数据
+                    console.log("getinfo 响应数据:", resp); // 打印响应数据
                     if (resp.error_message === "success") {
                         context.commit("updateUser", {
                             ...resp,
@@ -82,14 +82,14 @@ export default {
                             data.success(resp);
                         }
                     } else {
-                        // console.error("getinfo 返回错误:", resp); // 打印错误信息
+                        console.error("getinfo 返回错误:", resp); // 打印错误信息
                         if (typeof data.error === 'function') {
                             data.error(resp);
                         }
                     }
                 },
                 error(resp) {
-                    // console.error("getinfo 请求失败:", resp); // 打印请求错误
+                    console.error("getinfo 请求失败:", resp); // 打印请求错误
                     if (typeof data.error === 'function') {
                         data.error(resp);
                     }

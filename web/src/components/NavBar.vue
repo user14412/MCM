@@ -5,9 +5,24 @@
       <router-link class="navbar-brand" :to="{name: 'home'}">MCM</router-link>
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">本馆概况</router-link>
+            
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              本馆概况
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">本馆概况</router-link>
+              </li>
+              <li>
+                <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'news_index'}">新闻动态</router-link>
+              </li>
+              <li>
+                <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'visit_guide_index'}">参观须知</router-link>
+              </li>
+            </ul>
           </li>
+
           <li class="nav-item">
             <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">全景参观</router-link>
           </li>
