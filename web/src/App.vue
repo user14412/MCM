@@ -5,6 +5,7 @@
       <router-view />
     </main>
     <FooterComponent />
+    
   </div>
 </template>
 
@@ -13,7 +14,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap"
 import NavBar from "./components/NavBar.vue";
 import FooterComponent from './components/FooterComponent.vue';
-
 
 export default {
   name: 'App',

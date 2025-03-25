@@ -2,13 +2,13 @@
   <div class="user-profile-write">
     <div class="card shadow-lg">
       <div class="card-body p-4">
-        <!-- 文章标题 -->
+
         <div class="row mb-4">
           <label class="col-md-2 col-form-label fw-bold">标题</label>
           <div class="col-md-10">
-            <input 
+            <input
               v-model="article.title"
-              type="text" 
+              type="text"
               class="form-control form-control-lg"
               placeholder="请输入文章标题"
               :class="{ 'is-invalid': errors.title }"
@@ -19,32 +19,33 @@
           </div>
         </div>
 
-        <!-- 富文本编辑器 -->
         <div class="row mb-4">
           <label class="col-md-2 col-form-label fw-bold">内容</label>
           <div class="col-md-10">
-            <Editor
-              v-model="article.content"
-              api-key="your-tinymce-key"
-              :init="editorConfig"
-              :class="{ 'editor-error': errors.content }"
-            />
+            <div class="quill-editor-container" :class="{ 'editor-error': errors.content }">
+              <QuillEditor
+                v-model="article.content"
+                :options="quillOptions"
+                @blur="handleBlur"
+                @focus="handleFocus"
+                @ready="handleReady"
+              />
+            </div>
             <div v-if="errors.content" class="text-danger small mt-2">
               {{ errors.content }}
             </div>
           </div>
         </div>
 
-        <!-- 分类选择 -->
         <div class="row mb-4">
           <label class="col-md-2 col-form-label fw-bold">分类</label>
           <div class="col-md-4">
-            <select 
+            <select
               v-model="article.category"
               class="form-select"
             >
-              <option 
-                v-for="category in categories" 
+              <option
+                v-for="category in categories"
                 :key="category.id"
                 :value="category.id"
               >
@@ -54,20 +55,19 @@
           </div>
         </div>
 
-        <!-- 封面图片上传 -->
         <div class="row mb-4">
           <label class="col-md-2 col-form-label fw-bold">封面图</label>
           <div class="col-md-10">
             <div class="border-dashed p-3 rounded-3">
-              <input 
+              <input
                 type="file"
                 accept="image/*"
                 class="form-control"
                 @change="handleCoverUpload"
               >
               <div v-if="article.cover" class="mt-3">
-                <img 
-                  :src="article.cover" 
+                <img
+                  :src="article.cover"
                   class="preview-img img-thumbnail"
                   alt="封面预览"
                 >
@@ -76,15 +76,14 @@
           </div>
         </div>
 
-        <!-- 操作按钮 -->
         <div class="d-flex justify-content-end gap-3 mt-5">
-          <button 
+          <button
             class="btn btn-primary px-5"
             @click="submitArticle"
           >
             发布
           </button>
-          <button 
+          <button
             class="btn btn-outline-secondary px-5"
             @click="resetForm"
           >
@@ -97,12 +96,13 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import Editor from '@tinymce/tinymce-vue'
+import { ref, onMounted } from 'vue'
+import { QuillEditor } from '@vueup/vue-quill'
+import '@vueup/vue-quill/dist/vue-quill.snow.css'; // 导入默认样式
 import axios from 'axios'
 
 export default {
-  components: { Editor },
+  components: { QuillEditor }, // 注册 QuillEditor 组件
   props: {
     categories: {
       type: Array,
@@ -121,6 +121,7 @@ export default {
     })
 
     const errors = ref({})
+    const quillEditorRef = ref(null);
 
     const uploadImage = async (file) => {
       try {
@@ -133,18 +134,50 @@ export default {
         return ''
       }
     }
-    
-    // TinyMCE配置
-    const editorConfig = {
-      height: 500,
-      menubar: 'file edit view format tools',
-      plugins: 'code table lists link image',
-      toolbar: 'undo redo | formatselect | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | code',
-      images_upload_handler: async (blobInfo) => {
-        const file = blobInfo.blob()
-        return await uploadImage(file)
-      }
-    }
+
+    // Quill 配置
+    const quillOptions = {
+      placeholder: '请输入文章内容...', // 提示文字
+      theme: 'snow', // 使用雪主题
+      modules: {
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+          ['blockquote', 'code-block'],                   // block quotes and code blocks
+          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+          [{ 'list': 'ordered' }, { 'list': 'bullet' }],    // lists
+          [{ 'script': 'sub' }, { 'script': 'super' }],     // superscript/subscript
+          [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+          [{ 'direction': 'rtl' }],                         // text direction
+
+          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],         // header dropdown
+
+          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults
+          [{ 'font': [] }],                                 // font family
+          [{ 'align': [] }],                                 // text alignment
+
+          ['link', 'image', 'video'],                         // link and image, video
+          ['clean']                                         // remove formatting button
+        ],
+        image: {
+          upload: async (file) => {
+            const url = await uploadImage(file);
+            return url;
+          },
+        },
+      },
+    };
+
+    const handleReady = (quill) => {
+      quillEditorRef.value = quill;
+    };
+    const handleBlur = (quill) => {
+      console.log('Blur', quill);
+    };
+
+    const handleFocus = (quill) => {
+      console.log('Focus', quill);
+    };
 
     // 处理封面图片上传
     const handleCoverUpload = (e) => {
@@ -185,7 +218,7 @@ export default {
           ...article.value,
           cover: article.value.cover // 实际开发需要处理为文件上传
         })
-        
+
         emit('submitted', response.data)
         resetForm()
       } catch (error) {
@@ -202,16 +235,26 @@ export default {
         cover: null
       }
       errors.value = {}
+      if (quillEditorRef.value) {
+        quillEditorRef.value.setContents('');
+      }
     }
+
+    onMounted(()=>{
+       //console.log(quillEditorRef);
+    })
 
     return {
       article,
       errors,
-      editorConfig,
+      quillOptions,
       handleCoverUpload,
       submitArticle,
       resetForm,
-      uploadImage,
+      handleReady,
+      handleBlur,
+      handleFocus,
+      quillEditorRef
     }
   }
 }
@@ -241,5 +284,19 @@ export default {
 .editor-error {
   border: 1px solid #dc3545;
   border-radius: 4px;
+}
+
+/* Ensure the editor container has a specific height */
+.quill-editor-container {
+  height: 500px; /* Or any other desired height */
+  /* Additional styles to ensure proper layout */
+  width: 100%;
+  position: relative;
+}
+
+/* Style for the Quill editor itself.  Important for correct display. */
+.ql-editor {
+  height: 100%;  /* Make the editor fill its container */
+  overflow-y: auto; /* Ensure content is scrollable if it exceeds the height */
 }
 </style>
