@@ -6,7 +6,7 @@
 
 <script>
 // 视图：参观须知
-import ContentField from "../../components/ContentField.vue"
+import ContentField from "@/components/ContentField.vue"
 import ArticleView from "@/components/ArticleView.vue";
 
 export default{

@@ -61,7 +61,6 @@ export default {
           Authorization: "Bearer " + store.state.user.token,
         },
         success(resp){
-          console.log(resp);
           self.article = { // 直接整体赋值
             title: resp.title,
             content: resp.content,

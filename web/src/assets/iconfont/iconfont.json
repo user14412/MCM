@@ -1,0 +1,16 @@
+{
+  "id": "4870264",
+  "name": "mcm",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2451376",
+      "name": "404",
+      "font_class": "icon-test",
+      "unicode": "e654",
+      "unicode_decimal": 58964
+    }
+  ]
+}

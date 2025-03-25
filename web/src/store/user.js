@@ -26,7 +26,6 @@ export default {
             state.token = token;
         },
         logout(state) {
-            console.log("CIALLO!");
 
             state.id = "";
             state.username = "";

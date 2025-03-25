@@ -24,10 +24,10 @@
 </template>
 
 <script>
-import ContentField from '../../../components/ContentField.vue'
+import ContentField from '@/components/ContentField.vue'
 // import { useStore } from 'vuex'
 import { ref } from 'vue' // default不加括号，不加default就要加大括号名称不能变
-import router from '../../../router/index'
+import router from '@/router/index'
 import $ from 'jquery'
 
 export default {
@@ -51,7 +51,6 @@ export default {
                     confirmedPassword: confirmedPassword.value,
                 },
                 success: function(resp){
-                    // console.log(resp);
                     if(resp.error_message === "success"){
                         router.push({name: "user_account_login"});
                     }else{

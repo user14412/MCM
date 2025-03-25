@@ -2,7 +2,10 @@
   <nav class="navbar navbar-expand-lg bg-body-tertiary fixed-top">
     <div class="container">
        <!-- 换掉实现切换页面不刷新(其实是一个页面) -->
-      <router-link class="navbar-brand" :to="{name: 'home'}">MCM</router-link>
+      <router-link class="navbar-brand" :to="{name: 'home'}">
+        <img src="@/assets/images/Ciallo.jpg" alt="logo" width="30" height="24" class="d-inline-block align-text-top">
+        MCM
+      </router-link>
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             
@@ -34,19 +37,34 @@
           </li>
           
         </ul>
+
         <ul class="navbar-nav" v-if="$store.state.user.is_login">
           <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            {{ $store.state.user.username }}
-          </a>
-          <ul class="dropdown-menu">
-            <li>
-              <router-link class="dropdown-item" :to="{name: 'user_profile_index'}">个人中心</router-link>
-            </li>
-            <li><a class="dropdown-item" href="#" @click="logout">退出</a></li>
-          </ul>
-        </li>
+            <div class="d-flex align-items-center dropdown-toggle-container"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false">
+              <img 
+                  :src="store.state.user.photo" 
+                  class="img-fluid rounded-circle mt-2 mx-auto"
+                  style="max-width: 38px; height: 38px; object-fit: cover;"
+                  alt="用户头像">
+              <span class="nav-link dropdown-toggle text-reset">
+                {{ $store.state.user.username }}
+              </span>
+            </div>
+
+            <ul class="dropdown-menu">
+              <li>
+                <router-link class="dropdown-item" :to="{name: 'user_profile_index'}">个人中心</router-link>
+              </li>
+              <li>
+                <a class="dropdown-item" href="#" @click="logout">退出</a>
+              </li>
+            </ul>
+          </li>
         </ul>
+
         <ul class="navbar-nav" v-else-if="!$store.state.user.pulling_info">
           <li class="nav-item">
           <router-link class="nav-link" :to="{name: 'user_account_login'}" role="button">
@@ -68,7 +86,7 @@
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
-import router from '../router/index'
+import router from '@/router/index'
 
 export default{
   setup(){
@@ -83,6 +101,7 @@ export default{
     }
 
     return{
+      store,
       route_name,
       logout
     }
