@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.8",
+    "@tinymce/tinymce-vue": "^6.1.0",
+    "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
     "core-js": "^3.8.3",
     "jquery": "^3.7.1",

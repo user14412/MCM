@@ -1,36 +1,51 @@
 <template>
-  <div class="card">
-    <div class="card-body">
-      <UserProfileNavBar/>
-      <!-- <div class="my-post-title">
-          文章数量：{{posts.count}}
-      </div> -->
-      <div v-for="post in posts.posts" :key="post.id" class="article-item">
-            <UserPostCard :article="post"/>
-      </div>
+    <div v-for="post in posts.posts" :key="post.id" class="article-item">
+          <UserPostCard :article="post"/>
     </div>
-  </div>
 </template>
 
 <script>
 import UserPostCard from './UserPostCard.vue';
-import UserProfileNavBar from '@/components/UserProfileNavBar.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+import { reactive } from 'vue';
+import $ from 'jquery';
+
 
 export default {
-  props: {
-    posts: {
-      type: Object,
-      required: true,
-    }
-  },
   components: {
     UserPostCard,
-    UserProfileNavBar,
   },
-  setup(props){
-    console.log("输出", props.posts);
+  setup(){
+    const store = useStore();
+    let user = computed(() => store.state.user);
+    const posts = reactive({
+      count: 0,
+      posts: [],
+    });
+
+    $.ajax({
+      url: "http://127.0.0.1:3000/article/get/user/",
+      type: "GET",
+      headers: {
+        Authorization: "Bearer " + store.state.user.token,
+      },
+      success(resp) {
+        console.log("getArticleByUser 请求成功:", resp);
+        posts.posts = resp;
+        posts.count = posts.posts.length;
+      },
+      error(resp) {
+        console.error("getArticleByUser 请求失败:", resp); // 修正后的错误处理
+      }
+    });
+
+    return{
+      user,
+      posts,
+    }
+    }
   }
-}
 </script>
 
 <style scoped>

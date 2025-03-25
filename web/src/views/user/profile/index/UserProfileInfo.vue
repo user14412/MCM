@@ -1,3 +1,4 @@
+<!-- 个人中心 - 个人资料子组件 -->
 <template>
   <div class="profile-container">
     <div class="row justify-content-center"> <!-- 新增居中布局 -->
@@ -16,6 +17,9 @@
 
         <!-- 用户名区域 -->
         <div class="username text-center">{{ user.username }}</div>
+
+        <!-- 分割线 -->
+        <div class="divider-line my-2"></div>
       </div>
     </div>
   </div>
@@ -53,7 +57,7 @@ export default {
 }
 
 .divider-line {
-  width: 60%;  /* 控制分割线长度 */
+  width: 90%;  /* 控制分割线长度 */
   height: 1px;
   background-color: #eee;
   margin: rem auto;  /* 垂直间距控制 */

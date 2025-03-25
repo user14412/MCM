@@ -1,7 +1,7 @@
 import HomeIndexView from '@/views/home/HomeIndexView.vue'
 import NotFound from '@/views/error/NotFound.vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import UserProfileIndexView from '@/views/user/profile/post/UserProfileIndexView.vue'
+import UserProfileIndexView from '@/views/user/profile/index/UserProfileIndexView.vue'
 import UserAccountLoginView from '@/views/user/account/UserAccountLoginView.vue'
 import UserAccountRegisterView from '@/views/user/account/UserAccountRegisterView.vue'
 import NewsIndexView from '@/views/introduction/NewsIndexView.vue'

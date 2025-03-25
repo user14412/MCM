@@ -1,4 +1,4 @@
-<!-- 个人中心导航栏 -->
+<!-- 个人中心 - 功能区 - 个人中心导航栏子组件 -->
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
     <div class="container-fluid">
@@ -8,9 +8,10 @@
             v-for="(item, index) in navItems" 
             :key="item.name" 
             class="nav-item position-relative"
+            :class="{'dropdown': activeIndex === index}"
           >
             <!-- 常规导航项 -->
-            <template v-if="!item.dropdown">
+            <div v-if="!item.dropdown">
               <a
                 class="nav-link hover-effect"
                 :class="{ 'active-nav': activeIndex === index }"
@@ -19,23 +20,25 @@
               >
                 {{ item.name }}
               </a>
-            </template>
+            </div>
 
             <!-- 带下拉的导航项 -->
-            <div v-else class="dropdown">
+            <div v-else>
               <a
                 class="nav-link hover-effect dropdown-toggle"
                 :class="{ 'active-nav': activeIndex === index }"
                 href="#"
                 role="button"
                 data-bs-toggle="dropdown"
-                @click.prevent="setActive(index)"
+                @click.prevent="setActive((index + 1) * 10 + 1)"
               >
                 {{ item.name }}
               </a>
               <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">系统通知</a></li>
-                <li><a class="dropdown-item" href="#">我的回复</a></li>
+                <li v-if="index === 0"><a class="dropdown-item" href="#" @click.prevent="setActive((index + 1) * 10 + 1)">我的发布</a></li>
+                <li v-if="index === 0"><a class="dropdown-item" href="#" @click.prevent="setActive((index + 1) * 10 + 2)">编辑文章</a></li>
+                <li v-if="index === 3"><a class="dropdown-item" href="#" @click.prevent="setActive((index + 1) * 10 + 1)">系统通知</a></li>
+                <li v-if="index === 3"><a class="dropdown-item" href="#" @click.prevent="setActive((index + 1) * 10 + 2)">我的回复</a></li>
               </ul>
             </div>
           </li>
@@ -46,24 +49,49 @@
 </template>
 
 <script>
+
 export default {
   data() {
     return {
       activeIndex: 0,
       navItems: [
-        { name: '发布' },
-        { name: '收藏' },
-        { name: '点赞' },
-        { name: '消息', dropdown: true },
-        { name: '设置' },
+        { name: '发布',
+          dropdown: true,
+          number: 1, // 11 // 12
+        },
+        { name: '收藏',
+          number: 2,
+        },
+        { name: '点赞',
+          number: 3,
+        },
+        { name: '消息', 
+          dropdown: true,
+          number: 4, // 41 // 42
+        },
+        { name: '设置',
+          number: 5,
+        },
       ]
     }
   },
   methods: {
     setActive(index) {
-      this.activeIndex = index
-      // 触发父组件的事件setActive：调用父组件的setActive方法
-      this.$emit('setActive', this.navItems[index].name)
+      // 非下拉菜单
+      if(index <= 10){
+        this.activeIndex = index
+        // 触发父组件的事件setActive：调用父组件的setActive方法
+        this.$emit('setActive', this.navItems[index].number)
+      }else{
+        // 下拉菜单
+        // 取出十位，高亮显示菜单栏
+        this.activeIndex = Math.floor(index / 10) - 1; // 下标从0开始
+        // 直接把两位数传给Func，调用子菜单功能
+        this.$emit('setActive', index)
+
+        // 关闭选项
+        // 
+      }
     }
   }
 }
