@@ -28,13 +28,13 @@
           </li>
 
           <li class="nav-item">
-            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">全景参观</router-link>
+            <router-link :class="route_name == 'panorama_index' ? 'nav-link active':'nav-link'" :to="{name: 'panorama_index'}">全景参观</router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">馆藏展品</router-link>
+            <router-link :class="route_name == 'exhibit_index' ? 'nav-link active':'nav-link'" :to="{name: 'exhibit_index'}">馆藏展品</router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'" :to="{name: 'introduction_index'}">问卷反馈</router-link>
+            <router-link :class="route_name == 'feedback_index' ? 'nav-link active':'nav-link'" :to="{name: 'feedback_index'}">问卷反馈</router-link>
           </li>
           
         </ul>

@@ -54,6 +54,8 @@ export default {
         }
 
         const login = () => {
+            console.log("用戶名：", username.value)
+            console.log("密碼：", password.value)
             error_message.value = "";
             store.dispatch("login", {
                 username: username.value,

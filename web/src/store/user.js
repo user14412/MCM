@@ -46,7 +46,9 @@ export default {
                 password: data.password
             })
                 .then(resp => {
-                    const response = resp.data; // Axios响应数据在data属性中[1,5](@ref)
+                    const response = resp.data; 
+                    // const response = resp;
+                    console.log("resp: ", resp.data)
                     if (response.error_message === "success") {
                         localStorage.setItem("jwt_token", response.token);
                         context.commit("updateToken", response.token);

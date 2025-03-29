@@ -8,6 +8,10 @@ import NewsIndexView from '@/views/introduction/NewsIndexView.vue'
 import IntroductionIndexView from '@/views/introduction/IntroductionIndexView.vue'
 import VisitGuideIndexView from '@/views/introduction/VisitGuideIndexView.vue'
 import ArticleIndexView from '@/views/introduction/ArticleIndexView.vue'
+import TestView from '@/views/error/TestView.vue'
+import ExhibitIndexView from '@/views/exhibit/ExhibitIndexView.vue'
+import PanoramaIndexView from '@/views/panorama/PanoramaIndexView.vue'
+import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
 
 const routes = [
   // 重定向
@@ -58,6 +62,30 @@ const routes = [
     },
   },
   {
+    path: "/exhibit/",
+    name: "exhibit_index",
+    component: ExhibitIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/panorama/",
+    name: "panorama_index",
+    component: PanoramaIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/feedback/",
+    name: "feedback_index",
+    component: FeedbackIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
     path: "/user/profile/",
     name: "user_profile_index",
     component: UserProfileIndexView,
@@ -77,6 +105,14 @@ const routes = [
     path: "/user/account/register/",
     name: "user_account_register",
     component: UserAccountRegisterView,
+    meta: {
+      requestAuth: false,
+    },
+  },
+  {
+    path: "/test/",
+    name: "test",
+    component: TestView,
     meta: {
       requestAuth: false,
     },
