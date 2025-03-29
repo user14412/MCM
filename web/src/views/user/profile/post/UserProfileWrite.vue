@@ -1,94 +1,85 @@
 <template>
-  <div class="user-profile-write">
-    <div class="card shadow-lg">
-      <div class="card-body p-4">
+  <div class="user-profile-post-container">
+    <div class="card shadow-sm">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">编辑文章</h5>
+      </div>
 
-        <div class="row mb-4">
-          <label class="col-md-2 col-form-label fw-bold">标题</label>
-          <div class="col-md-10">
+      <div class="card-body">
+        <div v-if="loading" class="d-flex justify-content-center align-items-center py-5">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+
+        <div v-else>
+          <div class="mb-4">
+            <label for="post-title" class="form-label fw-bold">文章标题</label>
             <input
-              v-model="article.title"
               type="text"
               class="form-control form-control-lg"
+              id="post-title"
+              v-model="article.title"
               placeholder="请输入文章标题"
-              :class="{ 'is-invalid': errors.title }"
+              maxlength="200"
+            />
+            <div class="form-text text-end">{{ article.title.length }}/200</div>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label fw-bold">文章内容</label>
+            <QuillEditor
+              ref="quillEditor"
+              v-model:content="article.content"
+              contentType="html"
+              :options="editorOptions"
+              style="height: 400px;"
+              @ready="onEditorReady"
+            />
+          </div>
+
+          <div class="d-flex justify-content-end gap-3 mt-4">
+            <button
+              class="btn btn-outline-secondary px-4"
+              @click="handleCancel"
+              :disabled="submitting"
             >
-            <div v-if="errors.title" class="invalid-feedback">
-              {{ errors.title }}
-            </div>
+              取消
+            </button>
+
+            <button class="btn btn-primary px-4" @click="handleSubmit" :disabled="submitting">
+              <template v-if="submitting">
+                <span
+                  class="spinner-border spinner-border-sm me-2"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                提交中...
+              </template>
+              <template v-else>
+                <i class="bi bi-check-circle me-2"></i>
+                提交
+              </template>
+            </button>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div class="row mb-4">
-          <label class="col-md-2 col-form-label fw-bold">内容</label>
-          <div class="col-md-10">
-            <div class="quill-editor-container" :class="{ 'editor-error': errors.content }">
-              <QuillEditor
-                v-model="article.content"
-                :options="quillOptions"
-                @blur="handleBlur"
-                @focus="handleFocus"
-                @ready="handleReady"
-              />
-            </div>
-            <div v-if="errors.content" class="text-danger small mt-2">
-              {{ errors.content }}
-            </div>
+    <div class="modal fade" id="confirmModal" ref="confirmModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ modalTitle }}</h5>
+            <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-        </div>
-
-        <div class="row mb-4">
-          <label class="col-md-2 col-form-label fw-bold">分类</label>
-          <div class="col-md-4">
-            <select
-              v-model="article.category"
-              class="form-select"
-            >
-              <option
-                v-for="category in categories"
-                :key="category.id"
-                :value="category.id"
-              >
-                {{ category.name }}
-              </option>
-            </select>
+          <div class="modal-body">
+            <p>{{ modalMessage }}</p>
           </div>
-        </div>
-
-        <div class="row mb-4">
-          <label class="col-md-2 col-form-label fw-bold">封面图</label>
-          <div class="col-md-10">
-            <div class="border-dashed p-3 rounded-3">
-              <input
-                type="file"
-                accept="image/*"
-                class="form-control"
-                @change="handleCoverUpload"
-              >
-              <div v-if="article.cover" class="mt-3">
-                <img
-                  :src="article.cover"
-                  class="preview-img img-thumbnail"
-                  alt="封面预览"
-                >
-              </div>
-            </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+            <button class="btn btn-primary" @click="handleModalConfirm">确定</button>
           </div>
-        </div>
-
-        <div class="d-flex justify-content-end gap-3 mt-5">
-          <button
-            class="btn btn-primary px-5"
-            @click="submitArticle"
-          >
-            发布
-          </button>
-          <button
-            class="btn btn-outline-secondary px-5"
-            @click="resetForm"
-          >
-            重置
-          </button>
         </div>
       </div>
     </div>
@@ -96,207 +87,252 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue'
-import { QuillEditor } from '@vueup/vue-quill'
-import '@vueup/vue-quill/dist/vue-quill.snow.css'; // 导入默认样式
-import axios from 'axios'
+import { ref } from 'vue';
+import { onMounted } from 'vue';
+import { QuillEditor } from '@vueup/vue-quill'; // 引入编辑器组件
+import '@vueup/vue-quill/dist/vue-quill.snow.css'; // 引入编辑器组件的样式
+import { Modal } from 'bootstrap';
+import axios from 'axios';
+import { useStore } from 'vuex';
+import router from '@/router';
 
 export default {
-  components: { QuillEditor }, // 注册 QuillEditor 组件
-  props: {
-    categories: {
-      type: Array,
-      default: () => [
-        { id: 1, name: '技术分享' },
-        { id: 2, name: '生活随笔' }
-      ]
-    }
-  },
-  setup(props, { emit }) {
+  name: 'UserProfilePost',
+  components: { QuillEditor },
+  setup() {
+    const store = useStore();
+
+    // 响应式数据
     const article = ref({
-      title: '',
-      content: '',
-      category: props.categories[0]?.id || 1,
-      cover: null
-    })
+      title: '', // v-model
+      content: '', // v-model
+    });
 
-    const errors = ref({})
-    const quillEditorRef = ref(null);
+    const loading = ref(false);
+    const submitting = ref(false);
+    const quillEditor = ref(null); // 绑定组件的响应式对象，用来调用组件的相关操作的方法
+    const confirmModal = ref(null);
 
-    const uploadImage = async (file) => {
-      try {
-        const formData = new FormData()
-        formData.append('image', file)
-        const response = await axios.post('/api/upload', formData)
-        return response.data.url
-      } catch (error) {
-        console.error('图片上传失败:', error)
-        return ''
-      }
-    }
+    // 模态框相关状态
+    const modalTitle = ref(''); // 标题
+    const modalMessage = ref(''); //
+    const modalOkText = ref('确定'); // 确认按钮文字
+    const modalCallback = ref(null);
 
-    // Quill 配置
-    const quillOptions = {
-      placeholder: '请输入文章内容...', // 提示文字
-      theme: 'snow', // 使用雪主题
+    // 编辑器配置
+    const editorOptions = {
+      theme: 'snow',
       modules: {
         toolbar: [
-          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-          ['blockquote', 'code-block'],                   // block quotes and code blocks
-          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
-          [{ 'list': 'ordered' }, { 'list': 'bullet' }],    // lists
-          [{ 'script': 'sub' }, { 'script': 'super' }],     // superscript/subscript
-          [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
-          [{ 'direction': 'rtl' }],                         // text direction
-
-          [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-          [{ 'header': [1, 2, 3, 4, 5, 6, false] }],         // header dropdown
-
-          [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults
-          [{ 'font': [] }],                                 // font family
-          [{ 'align': [] }],                                 // text alignment
-
-          ['link', 'image', 'video'],                         // link and image, video
-          ['clean']                                         // remove formatting button
+          ['bold', 'italic', 'underline', 'strike'],
+          ['blockquote', 'code-block'],
+          [{ header: 1 }, { header: 2 }],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ script: 'sub' }, { script: 'super' }],
+          [{ indent: '-1' }, { indent: '+1' }],
+          [{ direction: 'rtl' }],
+          [{ size: ['small', false, 'large', 'huge'] }],
+          [{ header: [1, 2, 3, 4, 5, 6, false] }],
+          [{ color: [] }, { background: [] }],
+          [{ font: [] }],
+          [{ align: [] }],
+          ['clean'],
+          ['link', 'image', 'video'],
         ],
-        image: {
-          upload: async (file) => {
-            const url = await uploadImage(file);
-            return url;
-          },
-        },
       },
+      placeholder: '请输入文章内容...',
     };
 
-    const handleReady = (quill) => {
-      quillEditorRef.value = quill;
+    // 显示模态框方法
+    const showModal = (title, message, callback = null, okText = '确定') => {
+      modalTitle.value = title;
+      modalMessage.value = message;
+      modalOkText.value = okText;
+      modalCallback.value = callback;
+
+      const modalInstance = new Modal(confirmModal.value); // 使用 new Modal
+      modalInstance.show();
     };
-    const handleBlur = (quill) => {
-      console.log('Blur', quill);
-    };
 
-    const handleFocus = (quill) => {
-      console.log('Focus', quill);
-    };
-
-    // 处理封面图片上传
-    const handleCoverUpload = (e) => {
-      const file = e.target.files[0]
-      if (file) {
-        const reader = new FileReader()
-        reader.onload = () => {
-          article.value.cover = reader.result
-        }
-        reader.readAsDataURL(file)
-      }
-    }
-
-    // 表单验证
-    const validateForm = () => {
-      errors.value = {}
-      let isValid = true
-
-      if (!article.value.title.trim()) {
-        errors.value.title = '标题不能为空'
-        isValid = false
-      }
-
-      if (!article.value.content.trim()) {
-        errors.value.content = '内容不能为空'
-        isValid = false
-      }
-
-      return isValid
-    }
-
-    // 提交文章
-    const submitArticle = async () => {
-      if (!validateForm()) return
-
+    // 方法定义
+    const loadArticle = async () => {
       try {
-        const response = await axios.post('/api/articles', {
-          ...article.value,
-          cover: article.value.cover // 实际开发需要处理为文件上传
-        })
-
-        emit('submitted', response.data)
-        resetForm()
+        loading.value = true;
+        // 这里可以添加加载文章的逻辑
+        // 例如从API获取数据
       } catch (error) {
-        console.error('提交失败:', error)
+        console.error('加载文章失败:', error);
+        showModal('错误', '加载文章失败，请刷新重试');
+      } finally {
+        loading.value = false;
       }
-    }
+    };
 
-    // 重置表单
+    const handleSubmit = async () => {
+      // 返回一个promise对象
+      if (!validateForm()) return;
+
+      submitting.value = true;
+      try {
+        // 这里添加提交逻辑
+        // DONE例如调用API保存文章
+        // url data config
+        axios
+          .post(
+            'http://127.0.0.1:3000/article/add/',
+            // data
+            {
+              title: article.value.title,
+              content: article.value.content,
+            },
+            // config
+            {
+              headers: {
+                Authorization: 'Bearer ' + store.state.user.token,
+              },
+            }
+          )
+          // 成功的回调
+          .then((resp) => {
+            console.log('addArticle 请求成功:', resp);
+          })
+          // 失败的回调
+          .catch((error) => {
+            console.error('addArticle 请求失败:', error);
+          });
+
+        console.log('提交文章:', article.value);
+        showModal('成功', '文章保存成功', () => {
+          // DONE成功后的回调，例如跳转页面
+          router.push({ name: 'user_profile_index' });
+        });
+      } catch (error) {
+        console.error('提交失败:', error);
+        showModal('错误', '提交失败，请稍后重试');
+      } finally {
+        submitting.value = false; // 恢复按钮可点击状态
+      }
+      console.log('调用handleSubmit');
+    };
+
+    // 点击取消按钮
+    const handleCancel = () => {
+      if (hasUnsavedChanges()) {
+        showModal(
+          '确认',
+          '您有未保存的修改，确定要离开吗?',
+          () => {
+            // TODO确认离开的回调
+            resetForm();
+          },
+          '确定离开'
+        );
+      } else {
+        resetForm();
+      }
+      console.log('调用handleCancel');
+    };
+
+    const validateForm = () => {
+      if (!article.value.title.trim()) {
+        showModal('提示', '请输入文章标题');
+        return false;
+      }
+
+      const textContent = quillEditor.value.getText().trim(); //去除文本首尾两端空白字符
+      if (textContent.length < 10) {
+        showModal('提示', '文章内容不能少于10个字符');
+        return false;
+      }
+
+      return true;
+    };
+
+    const hasUnsavedChanges = () => {
+      // 标题或内容为空
+      return (
+        article.value.title.trim() ||
+        article.value.content.trim() ||
+        quillEditor.value.getText().trim()
+      );
+    };
+
     const resetForm = () => {
-      article.value = {
-        title: '',
-        content: '',
-        category: props.categories[0]?.id || 1,
-        cover: null
-      }
-      errors.value = {}
-      if (quillEditorRef.value) {
-        quillEditorRef.value.setContents('');
-      }
-    }
+      article.value.title = '';
+      article.value.content = '';
+      // TODO这里可以添加重置后的逻辑，例如跳转页面
+    };
 
-    onMounted(()=>{
-       //console.log(quillEditorRef);
-    })
+    // 点击确认之后的回调
+    const handleModalConfirm = () => {
+      if (modalCallback.value) modalCallback.value();
+      const modalInstance = Modal.getInstance(confirmModal.value); // 获取Modal实例
+      modalInstance.hide();
+    };
+
+    const onEditorReady = (quill) => {
+      // 编辑器准备就绪后的回调
+      console.log('编辑器已准备就绪', quill);
+    };
+
+    // 生命周期钩子
+    onMounted(() => {
+      confirmModal.value = document.getElementById('confirmModal');
+      loadArticle();
+    });
 
     return {
       article,
-      errors,
-      quillOptions,
-      handleCoverUpload,
-      submitArticle,
-      resetForm,
-      handleReady,
-      handleBlur,
-      handleFocus,
-      quillEditorRef
-    }
-  }
-}
+      loading,
+      editorOptions,
+      onEditorReady,
+      submitting,
+      handleCancel,
+      quillEditor,
+      handleSubmit,
+      confirmModal,
+      modalTitle,
+      modalMessage,
+      modalOkText,
+      handleModalConfirm,
+    };
+  },
+};
 </script>
 
 <style scoped>
-.user-profile-write {
-  max-width: 1200px;
-  margin: 2rem auto;
+/* 添加CSS修复 */
+.modal {
+  z-index: 1050 !important;
+  /* 确保低于Bootstrap下拉菜单的z-index(1060) */
 }
 
-.border-dashed {
-  border: 2px dashed #dee2e6;
-  transition: border-color 0.3s ease;
+.modal-backdrop {
+  z-index: 1040 !important;
 }
 
-.border-dashed:hover {
-  border-color: #0d6efd;
+.user-profile-post-container {
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-.preview-img {
-  max-width: 200px;
-  max-height: 150px;
-  object-fit: cover;
+/* 自定义编辑器样式 */
+:deep(.ql-toolbar) {
+  border-top-left-radius: 0.375rem !important;
+  border-top-right-radius: 0.375rem !important;
+  border-color: #dee2e6 !important;
 }
 
-.editor-error {
-  border: 1px solid #dc3545;
-  border-radius: 4px;
+:deep(.ql-container) {
+  border-bottom-left-radius: 0.375rem !important;
+  border-bottom-right-radius: 0.375rem !important;
+  border-color: #dee2e6 !important;
+  font-family: inherit;
 }
 
-/* Ensure the editor container has a specific height */
-.quill-editor-container {
-  height: 500px; /* Or any other desired height */
-  /* Additional styles to ensure proper layout */
-  width: 100%;
-  position: relative;
-}
-
-/* Style for the Quill editor itself.  Important for correct display. */
-.ql-editor {
-  height: 100%;  /* Make the editor fill its container */
-  overflow-y: auto; /* Ensure content is scrollable if it exceeds the height */
+:deep(.ql-editor) {
+  min-height: 300px;
+  font-size: 1rem;
+  line-height: 1.6;
 }
 </style>

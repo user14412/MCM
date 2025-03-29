@@ -7,6 +7,7 @@
         MCM
       </router-link>
       <div class="collapse navbar-collapse" id="navbarText">
+        
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             
           <li class="nav-item dropdown">
@@ -110,7 +111,8 @@ export default{
 </script>
 
 <style scoped>
+ /* 确保导航栏在其他内容之上 */
 .navbar {
-  z-index: 1000; /* 确保导航栏在其他内容之上 */
+  z-index: 1060;
 }
 </style>

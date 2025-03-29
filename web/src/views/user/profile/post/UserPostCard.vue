@@ -32,7 +32,7 @@
 
                         <!-- 正文内容 -->
                         <p class="card-text text-secondary fs-6 mb-0">
-                            {{ truncatedContent }}
+                            {{ truncatedContent() }}
                             <router-link 
                                 :to="`/article/${article.id}/`" 
                                 class="link-primary text-decoration-none">
@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 export default {
     props: {
         article: {
@@ -55,38 +57,47 @@ export default {
             required: true,
         }
     },
-    data() {
-        return {
-            isHovered: false
-        }
-    },
-    computed: {
-        truncatedContent() {
+    setup(props){
+        let isHovered = ref(false);
+
+        const truncatedContent = () => { // 超出预览字数上限截断内容
+            // 注意代码的鲁棒性
+            // content === null 时直接访问其content字段会报错
+            if (props.article.content === null || props.article.content === undefined){
+                return '';
+            }
             const maxLength = 186;
-            return this.article.content.length > maxLength 
-                ? this.article.content.substring(0, maxLength) + '...'
-                : this.article.content;
-        },
-        cardHoverStyle() {
+            return props.article.content.length > maxLength 
+                ? props.article.content.substring(0, maxLength) + '...'
+                : props.article.content;
+        }
+
+        const cardHoverStyle = () => { // 卡片悬浮样式
             return {
-                transform: this.isHovered ? 'translateY(-2px)' : 'none',
+                transform: isHovered.value ? 'translateY(-2px)' : 'none',
                 transition: 'all 0.3s ease'
             }
-        },
-    },
-    methods: {
-        formatDate(date) {
+        }
+
+        const formatDate = (date) => { // 格式化日期
             if (!date) return '';
             return new Date(date).toLocaleString('zh-CN', {
                 year: 'numeric',
                 month: '2-digit',
                 day: '2-digit'
             }).replace(/\//g, '年')
-              .replace('年', '年')
-              .replace('月', '月')
-              .replace('日', '日');
+             .replace('年', '年')
+             .replace('月', '月')
+             .replace('日', '日');
         }
-    }
+
+        return {
+            isHovered,
+            truncatedContent,
+            cardHoverStyle,
+            formatDate,
+        }
+    },
 };
 </script>
 

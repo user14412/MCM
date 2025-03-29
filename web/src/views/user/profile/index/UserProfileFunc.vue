@@ -6,7 +6,7 @@
 
       <UserProfilePost v-if="func == 11" />
       <UserProfileWrite v-if="func == 12" />
-      <UserProfileFavorite v-if="func == 2" />
+      <!-- <UserProfileFavorite v-if="func == 2" /> -->
       <UserProfileLike v-if="func == 3" />
       <UserProfileSysMessage v-if="func == 41" />
       <UserProfileMessage v-if="func == 42" />
@@ -19,7 +19,7 @@
 import UserProfileNavBar from '@/views/user/profile/index/UserProfileNavBar.vue';
 import UserProfilePost from '@/views/user/profile/post/UserProfilePost.vue';
 import UserProfileWrite from '@/views/user/profile/post/UserProfileWrite.vue';
-import UserProfileFavorite from '@/views/user/profile/favorite/UserProfileFavorite.vue';
+// import UserProfileFavorite from '@/views/user/profile/favorite/UserProfileFavorite.vue';
 import UserProfileLike from '@/views/user/profile/like/UserProfileLike.vue';
 import UserProfileSysMessage from '@/views/user/profile/message/UserProfileSysMessage.vue';
 import UserProfileMessage from '@/views/user/profile/message/UserProfileMessage.vue';
@@ -31,7 +31,7 @@ export default {
     UserProfileNavBar,
     UserProfilePost, // 11
     UserProfileWrite, // 12
-    UserProfileFavorite, // 2
+    // UserProfileFavorite, // 2
     UserProfileLike, // 3
     UserProfileSysMessage, // 41
     UserProfileMessage, // 42

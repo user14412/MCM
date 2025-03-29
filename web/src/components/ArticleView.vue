@@ -13,7 +13,7 @@
 <script>
 // 组件：根据文章id显示文章内容
 // 参数：articleId
-import $ from 'jquery';
+import axios from 'axios';
 import { useStore } from 'vuex';
 
 export default {
@@ -50,29 +50,29 @@ export default {
   methods: {
     fetchArticle() {
       const store = useStore();
-      const self = this;
-      $.ajax({
+      axios({
         url: "http://127.0.0.1:3000/article/get/",
-        type: "GET",
-        data: {
+        method: "GET",
+        params: {
           ArticleId: this.articleId,
         },
         headers: {
           Authorization: "Bearer " + store.state.user.token,
         },
-        success(resp){
-          self.article = { // 直接整体赋值
-            title: resp.title,
-            content: resp.content,
-            author: resp.username,
-            photo: resp.photo,
-            createtime: resp.createtime,
-          };
-        },
-        error(resp){
-          console.log(resp);
-        }
       })
+        .then((response) => {
+          this.article = { // 直接整体赋值
+            title: response.data.title,
+            content: response.data.content,
+            author: response.data.username,
+            photo: response.data.photo,
+            createtime: response.data.createtime,
+          };
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
     },
     formatDate(date) {
       if (!date) return '';

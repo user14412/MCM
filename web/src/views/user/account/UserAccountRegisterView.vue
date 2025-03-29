@@ -28,7 +28,7 @@ import ContentField from '@/components/ContentField.vue'
 // import { useStore } from 'vuex'
 import { ref } from 'vue' // default不加括号，不加default就要加大括号名称不能变
 import router from '@/router/index'
-import $ from 'jquery'
+import axios from 'axios';
 
 export default {
     components: {
@@ -42,21 +42,22 @@ export default {
         let error_message = ref('');
 
         const register = () => {
-            $.ajax({
-                url:"http://127.0.0.1:3000/user/account/register/",
-                type: "post", // 会修改数据库就用post
-                data:{
-                    username: username.value,
-                    password: password.value,
-                    confirmedPassword: confirmedPassword.value,
-                },
-                success: function(resp){
-                    if(resp.error_message === "success"){
-                        router.push({name: "user_account_login"});
-                    }else{
-                        error_message.value = resp.error_message
-                    }
-                },
+            axios.post("http://127.0.0.1:3000/user/account/register/", {
+            username: username.value,
+            password: password.value,
+            confirmedPassword: confirmedPassword.value
+            })
+            .then(response => {
+            const resp = response.data; // 响应数据需从`response.data`获取[3,4](@ref)
+            if (resp.error_message === "success") {
+                router.push({ name: "user_account_login" });
+            } else {
+                error_message.value = resp.error_message;
+            }
+            })
+            .catch(error => {
+            // 统一处理网络错误或服务器返回的HTTP错误状态码（如4xx/5xx）
+            error_message.value = error.response?.data?.error_message || "请求失败，请检查网络";
             });
         }
 

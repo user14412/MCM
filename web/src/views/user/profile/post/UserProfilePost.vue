@@ -9,7 +9,7 @@ import UserPostCard from './UserPostCard.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import { reactive } from 'vue';
-import $ from 'jquery';
+import axios from 'axios';
 
 
 export default {
@@ -24,21 +24,25 @@ export default {
       posts: [],
     });
 
-    $.ajax({
-      url: "http://127.0.0.1:3000/article/get/user/",
-      type: "GET",
+    axios.get("http://127.0.0.1:3000/article/get/user/", {
       headers: {
-        Authorization: "Bearer " + store.state.user.token,
-      },
-      success(resp) {
-        console.log("getArticleByUser 请求成功:", resp);
-        posts.posts = resp;
-        posts.count = posts.posts.length;
-      },
-      error(resp) {
-        console.error("getArticleByUser 请求失败:", resp); // 修正后的错误处理
+        Authorization: "Bearer " + store.state.user.token
       }
-    });
+    })
+      .then(response => {
+        console.log("getArticleByUser 请求成功:", response.data);
+        posts.posts = response.data; // 响应数据需从response.data获取[1,5](@ref)
+        posts.count = posts.posts.length;
+      })
+      .catch(error => {
+        if (error.response) {
+          // 服务器返回了非2xx状态码的错误
+          console.error("getArticleByUser 请求失败:", error.response.data);
+        } else {
+          // 网络错误或无响应（如跨域问题）
+          console.error("网络错误:", error.message);
+        }
+      });
 
     return{
       user,

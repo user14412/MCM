@@ -1,4 +1,4 @@
-import $ from 'jquery'
+import axios from "axios";
 
 export default {
     state: {
@@ -41,59 +41,55 @@ export default {
         // 异步，提交mutation用于修改state
         // dispatch方式调用
         login(context, data) {
-            $.ajax({
-                url: "http://127.0.0.1:3000/user/account/token/",
-                type: "post",
-                data: {
-                    username: data.username,
-                    password: data.password,
-                },
-                success(resp) {
-                    if (resp.error_message === "success") {
-                        // 本地存储：是一个字典
-                        localStorage.setItem("jwt_token", resp.token);
-                        context.commit("updateToken", resp.token);
-                        data.success(resp);
+            axios.post("http://127.0.0.1:3000/user/account/token/", {
+                username: data.username,
+                password: data.password
+            })
+                .then(resp => {
+                    const response = resp.data; // Axios响应数据在data属性中[1,5](@ref)
+                    if (response.error_message === "success") {
+                        localStorage.setItem("jwt_token", response.token);
+                        context.commit("updateToken", response.token);
+                        data.success(response);
                     } else {
-                        data.error(resp);
+                        data.error(response);
                     }
-                },
-                error(resp) {
-                    data.error(resp);
-                }
-            });
+                })
+                .catch(error => {
+                    // 处理网络错误或服务器错误响应
+                    const errorResponse = error.response?.data || error.message;
+                    data.error(errorResponse);
+                });
         },
         getinfo(context, data) {
-            $.ajax({
-                url: "http://127.0.0.1:3000/user/account/info/",
-                type: "get",
+            axios.get("http://127.0.0.1:3000/user/account/info/", {
                 headers: {
-                    Authorization: "Bearer " + context.state.token,
-                },
-                success(resp) {
-                    console.log("getinfo 响应数据:", resp); // 打印响应数据
-                    if (resp.error_message === "success") {
+                    Authorization: "Bearer " + context.state.token
+                }
+            })
+                .then(resp => {
+                    console.log("getinfo 响应数据:", resp.data); // 打印响应数据
+                    if (resp.data.error_message === "success") {
                         context.commit("updateUser", {
-                            ...resp,
+                            ...resp.data,
                             is_login: true,
                         });
                         if (typeof data.success === 'function') {
-                            data.success(resp);
+                            data.success(resp.data);
                         }
                     } else {
-                        console.error("getinfo 返回错误:", resp); // 打印错误信息
+                        console.error("getinfo 返回错误:", resp.data); // 打印错误信息
                         if (typeof data.error === 'function') {
-                            data.error(resp);
+                            data.error(resp.data);
                         }
                     }
-                },
-                error(resp) {
-                    console.error("getinfo 请求失败:", resp); // 打印请求错误
+                })
+                .catch(error => {
+                    console.error("getinfo 请求失败:", error); // 打印请求错误
                     if (typeof data.error === 'function') {
-                        data.error(resp);
+                        data.error(error);
                     }
-                }
-            });
+                });
         },
         logout(context) {
             localStorage.removeItem("jwt_token");

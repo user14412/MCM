@@ -1,10 +1,10 @@
 <!-- 个人中心 - 个人资料子组件 -->
 <template>
-  <div class="profile-container">
+  <div class="profile-container-fluid">
     <div class="row justify-content-center"> <!-- 新增居中布局 -->
       <div class="col-12 d-flex flex-column align-items-center"> <!-- 改为垂直布局 -->
         <!-- 头像容器 -->
-        <div class="avatar-container">
+        <div class="avatar-container-fluid">
           <img 
             :src="user.photo" 
             alt="个人头像"
@@ -16,7 +16,7 @@
         <div class="divider-line my-2"></div>
 
         <!-- 用户名区域 -->
-        <div class="username text-center">{{ user.username }}</div>
+        <div class="username text-center-fluid">{{ user.username }}</div>
 
         <!-- 分割线 -->
         <div class="divider-line my-2"></div>

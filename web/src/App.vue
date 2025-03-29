@@ -10,10 +10,10 @@
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap"
 import NavBar from "./components/NavBar.vue";
 import FooterComponent from './components/FooterComponent.vue';
+import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap";
 
 export default {
   name: 'App',
