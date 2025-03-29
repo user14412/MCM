@@ -19,7 +19,7 @@ public class AddArticleServiceImpl implements AddArticleService {
     ArticleMapper articleMapper;
 
     @Override
-    public String addarticle(Map<String, String> data) {
+    public String addarticle(Article data) {
         /*{
             title: "xxx",
             content: "xxx",
@@ -29,15 +29,16 @@ public class AddArticleServiceImpl implements AddArticleService {
         UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
         User user = loginUser.getUser();
 
-        String title = data.get("title");
-        String content = data.get("content");
+        String title = data.getTitle();
+        String content = data.getContent();
+
         Integer userId = user.getId();
         String username = user.getUsername();
         String photo = user.getPhoto();
         Date now = new Date();
         Article article = new Article(null, userId, username, photo, title, content, now);
         articleMapper.insert(article);
-
+        System.out.println("插入文章：" + article);
         return "add article success";
     }
 }

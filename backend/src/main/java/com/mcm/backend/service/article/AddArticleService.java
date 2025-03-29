@@ -1,7 +1,9 @@
 package com.mcm.backend.service.article;
 
+import com.mcm.backend.pojo.Article;
+
 import java.util.Map;
 
 public interface AddArticleService {
-    String addarticle(Map<String, String> data);
+    String addarticle(Article data);
 }

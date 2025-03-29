@@ -15,45 +15,25 @@
         <div v-else>
           <div class="mb-4">
             <label for="post-title" class="form-label fw-bold">文章标题</label>
-            <input
-              type="text"
-              class="form-control form-control-lg"
-              id="post-title"
-              v-model="article.title"
-              placeholder="请输入文章标题"
-              maxlength="200"
-            />
+            <input type="text" class="form-control form-control-lg" id="post-title" v-model="article.title"
+              placeholder="请输入文章标题" maxlength="200" />
             <div class="form-text text-end">{{ article.title.length }}/200</div>
           </div>
 
           <div class="mb-4">
             <label class="form-label fw-bold">文章内容</label>
-            <QuillEditor
-              ref="quillEditor"
-              v-model:content="article.content"
-              contentType="html"
-              :options="editorOptions"
-              style="height: 400px;"
-              @ready="onEditorReady"
-            />
+            <QuillEditor ref="quillEditor" v-model:content="article.content" contentType="html" :options="editorOptions"
+              style="height: 400px;" @ready="onEditorReady" />
           </div>
 
           <div class="d-flex justify-content-end gap-3 mt-4">
-            <button
-              class="btn btn-outline-secondary px-4"
-              @click="handleCancel"
-              :disabled="submitting"
-            >
+            <button class="btn btn-outline-secondary px-4" @click="handleCancel" :disabled="submitting">
               取消
             </button>
 
             <button class="btn btn-primary px-4" @click="handleSubmit" :disabled="submitting">
               <template v-if="submitting">
-                <span
-                  class="spinner-border spinner-border-sm me-2"
-                  role="status"
-                  aria-hidden="true"
-                ></span>
+                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
                 提交中...
               </template>
               <template v-else>
@@ -66,6 +46,7 @@
       </div>
     </div>
 
+    <!-- 模态框 -->
     <div class="modal fade" id="confirmModal" ref="confirmModal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
@@ -173,6 +154,7 @@ export default {
       if (!validateForm()) return;
 
       submitting.value = true;
+      console.log('提交文章:', article.value);
       try {
         // 这里添加提交逻辑
         // DONE例如调用API保存文章
@@ -188,6 +170,7 @@ export default {
             // config
             {
               headers: {
+                // 'Content-Type': 'application/json', // 明确声明JSON格式
                 Authorization: 'Bearer ' + store.state.user.token,
               },
             }
@@ -200,8 +183,6 @@ export default {
           .catch((error) => {
             console.error('addArticle 请求失败:', error);
           });
-
-        console.log('提交文章:', article.value);
         showModal('成功', '文章保存成功', () => {
           // DONE成功后的回调，例如跳转页面
           router.push({ name: 'user_profile_index' });
@@ -301,14 +282,11 @@ export default {
 </script>
 
 <style scoped>
-/* 添加CSS修复 */
-.modal {
-  z-index: 1050 !important;
-  /* 确保低于Bootstrap下拉菜单的z-index(1060) */
-}
-
-.modal-backdrop {
-  z-index: 1040 !important;
+.modal-dialog {
+  margin-top: 8vh !important;
+  /* 下移8%视口高度 */
+  transform: translateY(0) !important;
+  /* 禁用默认居中转换 */
 }
 
 .user-profile-post-container {
