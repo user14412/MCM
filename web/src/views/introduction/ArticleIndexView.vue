@@ -1,6 +1,6 @@
 <template>
   <ContentField>
-      <ArticleView :article-id="articleId" />
+      <ArticleView :articleId="articleId" />
   </ContentField>
 </template>
 

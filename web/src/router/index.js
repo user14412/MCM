@@ -12,6 +12,7 @@ import TestView from '@/views/error/TestView.vue'
 import ExhibitIndexView from '@/views/exhibit/ExhibitIndexView.vue'
 import PanoramaIndexView from '@/views/panorama/PanoramaIndexView.vue'
 import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
+import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue'
 
 const routes = [
   // 重定向
@@ -65,6 +66,14 @@ const routes = [
     path: "/exhibit/",
     name: "exhibit_index",
     component: ExhibitIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/exhibit/:exhibitId/",
+    name: "exhibit_details_index",
+    component: ExhibitDetailsIndexView,
     meta: {
       requestAuth: true,
     },
