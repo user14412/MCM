@@ -6,7 +6,7 @@
 
 <script>
 import ContentField from "@/components/ContentField.vue"
-import ExhibitView from "@/components/ExhibitView.vue";
+import ExhibitView from "@/views/exhibit/ExhibitView.vue";
 
 export default {
     computed: {

@@ -30,7 +30,7 @@ export default {
       }
     })
       .then(response => {
-        console.log("getArticleByUser 请求成功:", response.data);
+        // console.log("getArticleByUser 请求成功:", response.data);
         posts.posts = response.data; // 响应数据需从response.data获取[1,5](@ref)
         posts.count = posts.posts.length;
       })

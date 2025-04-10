@@ -66,10 +66,15 @@ export default {
             if (props.article.content === null || props.article.content === undefined){
                 return '';
             }
+            const str_show = props.article.content.replace(/<[^>]+>/g, '');
+            if(str_show === null || str_show === undefined){
+                return '';
+            }
+            // console.log("str_show: ", str_show);
             const maxLength = 186;
-            return props.article.content.length > maxLength 
-                ? props.article.content.substring(0, maxLength) + '...'
-                : props.article.content;
+            return str_show.length > maxLength 
+                ? str_show.substring(0, maxLength) + '...'
+                : str_show;
         }
 
         const cardHoverStyle = () => { // 卡片悬浮样式
@@ -81,14 +86,8 @@ export default {
 
         const formatDate = (date) => { // 格式化日期
             if (!date) return '';
-            return new Date(date).toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit'
-            }).replace(/\//g, '年')
-             .replace('年', '年')
-             .replace('月', '月')
-             .replace('日', '日');
+            date = date.substring(0, 10);
+            return date.replace('-', '年').replace('-', '月') + '日';
         }
 
         return {

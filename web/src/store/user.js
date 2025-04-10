@@ -47,10 +47,9 @@ export default {
             })
                 .then(resp => {
                     const response = resp.data; 
-                    // const response = resp;
-                    console.log("resp: ", resp.data)
                     if (response.error_message === "success") {
                         localStorage.setItem("jwt_token", response.token);
+                        localStorage.setItem("is_login", true);
                         context.commit("updateToken", response.token);
                         data.success(response);
                     } else {
@@ -95,6 +94,7 @@ export default {
         },
         logout(context) {
             localStorage.removeItem("jwt_token");
+            localStorage.removeItem("is_login");
             context.commit("logout");
         }
     },

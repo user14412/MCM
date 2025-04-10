@@ -77,7 +77,6 @@ const fetchExhibits = async () => {
       },
     })
       .then((resp) => {
-        // console.log("resp: ", resp.data);
         exhibits.value = resp.data;
         loading.value = false; // 加载完成
       })

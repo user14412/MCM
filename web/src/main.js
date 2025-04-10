@@ -9,4 +9,4 @@ import 'bootstrap';
 createApp(App).use(store).use(router).mount('#app')
 
 
-document.title = 'MCM';
+document.title = 'HEU海洋文化馆官网';

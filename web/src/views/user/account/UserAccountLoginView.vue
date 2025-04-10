@@ -54,8 +54,6 @@ export default {
         }
 
         const login = () => {
-            console.log("用戶名：", username.value)
-            console.log("密碼：", password.value)
             error_message.value = "";
             store.dispatch("login", {
                 username: username.value,
@@ -67,7 +65,7 @@ export default {
                             // 登录成功
                             // 获取用户信息：用户名、头像成功
                             // 跳转到主页
-                            router.push({ name: 'home' });
+                            router.push({ path: '/' });
                             // 拉取信息完毕，恢复pulling_info的值
                             store.commit("updatePullingInfo", false);
                         },

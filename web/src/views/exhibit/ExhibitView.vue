@@ -126,7 +126,6 @@ export default {
         },
       })
         .then((resp) => {
-          console.log("img: ", resp.data.images_string);
           this.exhibit = {
             name: resp.data.name,
             comment: resp.data.comment,
@@ -141,7 +140,7 @@ export default {
     startAutoPlay() {
       this.autoPlayTimer = setInterval(() => {
         this.currentIndex = (this.currentIndex + 1) % this.sortedImages.length
-      }, 5000) // 每3秒切换一张图片
+      }, 5000) // 每5秒切换一张图片
     },
     // 停止自动轮播
     stopAutoPlay(){
@@ -149,9 +148,6 @@ export default {
     },
     // 图片点击切换
     handleCarouselClick(e) {
-      this.startAutoPlay() // 手动操作时，暂停自动轮播
-      setTimeout(() => this.startAutoPlay(), 1000) // 1秒后恢复自动轮播
-
       const rect = e.currentTarget.getBoundingClientRect()
       const clickX = e.clientX - rect.left
       const width = rect.width

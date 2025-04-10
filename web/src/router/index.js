@@ -151,7 +151,8 @@ router.beforeEach((to, from, next) => {
   const store = require('@/store').default; // 避免循环引入
   // 如果需要授权&&未登录，跳转到登录页面
   if (to.meta.requestAuth && !store.state.user.is_login) {
-    next({ name: "user_account_login" });
+    
+    next({name: "user_account_login"})
   } else {
     // 不需要授权||已登录直接打开原页面
     next();

@@ -156,13 +156,16 @@ export default{
   /* color: white !important; */
   /* box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); */
   /* font-weight: 600; */
-  color: #8b00ff !important;
+  color: #0068ff !important;
 }
 /* 头像文字悬停颜色 */
 .nav-link.dropdown-toggle:hover {
-  color: #8b00ff !important;
+  color: #0068ff !important;
 }
-
+.user-menu{
+  font-family: "Microsoft YaHei";
+  font-size: 0.9em;
+}
 @media (max-width: 992px) {
   .nav-link {
     margin: 4px 0 !important;

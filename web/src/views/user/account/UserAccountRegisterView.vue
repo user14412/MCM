@@ -42,22 +42,25 @@ export default {
         let error_message = ref('');
 
         const register = () => {
-            axios.post("http://127.0.0.1:3000/user/account/register/", {
-            username: username.value,
-            password: password.value,
-            confirmedPassword: confirmedPassword.value
+            axios({
+                url: "http://127.0.0.1:3000/user/account/register/",
+                method: "POST",
+                params: {
+                    username: username.value,
+                    password: password.value,
+                    confirmedPassword: confirmedPassword.value
+                },
             })
             .then(response => {
-            const resp = response.data; // 响应数据需从`response.data`获取[3,4](@ref)
-            if (resp.error_message === "success") {
-                router.push({ name: "user_account_login" });
-            } else {
-                error_message.value = resp.error_message;
-            }
+                const resp = response.data;
+                if (resp.error_message === "success") {
+                    router.push({ name: "user_account_login" });
+                } else {
+                    error_message.value = resp.error_message;
+                }
             })
             .catch(error => {
-            // 统一处理网络错误或服务器返回的HTTP错误状态码（如4xx/5xx）
-            error_message.value = error.response?.data?.error_message || "请求失败，请检查网络";
+                console.error("error: ", error);
             });
         }
 
