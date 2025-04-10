@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer bg-body-tertiary mt-auto py-3" style="margin-top: 56px;">
+  <footer class="footer mt-auto py-3" style="margin-top: 56px;">
     <div class="container">
       <div class="row">
         <div class="col-md-4 text-center text-md-start">
@@ -27,7 +27,14 @@ export default {
   position: relative;
   bottom: 0;
   width: 100%;
-  background-color: #f8f9fa; /* 与 Navbar 背景色一致 */
-  border-top: 1px solid #e9ecef; /* 添加顶部边框 */
+  /* 与 Navbar 背景色一致 */
+  /* background-color: #f8f9fa; */
+  background-color: transparent;
+  /* 添加顶部边框 */
+  /* border-top: 1px solid #e9ecef;  */
 }
+/* 蓝色字体 */
+/* .text-muted{
+  color: #0d6efd !important;
+} */
 </style>

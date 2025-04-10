@@ -15,7 +15,8 @@ export default{
     ArticleView,
   },
   setup() {
-    const articleId = 4;
+    // const articleId = 4;
+    const articleId = 16;
     return {
       articleId,
     }

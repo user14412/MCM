@@ -1,7 +1,7 @@
 <template>
-    <div v-if="loadding">加载中...</div>
-    <div v-else-if="error">错误：{{ error }}</div>
-    <div class="v-else">
+    <div v-if="loadding" class="content-container">加载中...</div>
+    <div v-else-if="error" class="content-container">错误：{{ error }}</div>
+    <div v-else class="content-container">
         <div class="container mt-4">
             <!-- 筛选和搜索区域 -->
             <div class="row mb-4">
@@ -18,7 +18,7 @@
                     </div>
                 </div>
             </div>
-    
+
             <!-- 展品列表 -->
             <div class="row row-cols-1 row-cols-md-4 g-4">
                 <div class="col" v-for="exhibit in paginatedExhibits" :key="exhibit.id">
@@ -31,14 +31,15 @@
                     </div>
                 </div>
             </div>
-    
+
             <!-- 分页控件 -->
             <nav class="mt-4">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" :class="{ disabled: currentPage === 1 }">
                         <a class="page-link" href="#" @click.prevent="currentPage--">上一页</a>
                     </li>
-                    <li class="page-item" v-for="page in pageRange" :key="page" :class="{ active: page === currentPage }">
+                    <li class="page-item" v-for="page in pageRange" :key="page"
+                        :class="{ active: page === currentPage }">
                         <a class="page-link" href="#" @click.prevent="currentPage = page">{{ page }}</a>
                     </li>
                     <li class="page-item" :class="{ disabled: currentPage === totalPages }">
@@ -76,7 +77,7 @@ const fetchExhibits = async () => {
       },
     })
       .then((resp) => {
-        console.log("resp: ", resp.data);
+        // console.log("resp: ", resp.data);
         exhibits.value = resp.data;
         loading.value = false; // 加载完成
       })
@@ -129,6 +130,10 @@ const goToDetail = (id) => router.push(`/exhibit/${id}/`)
 </script>
 
 <style scoped>
+/* 调整本页面与顶部（导航栏）之间的间距 */
+.content-container {
+    margin-top:45px;
+}
 .exhibit-thumbnail {
     height: 200px;
     object-fit: cover;

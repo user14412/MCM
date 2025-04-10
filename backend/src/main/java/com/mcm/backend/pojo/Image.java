@@ -16,6 +16,4 @@ public class Image {
     private String url;
     @TableField(value = "exhibit_id")
     private Integer exhibitId;
-    @TableField(value = "is_primary")
-    private boolean isPrimary;
 }

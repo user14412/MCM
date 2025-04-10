@@ -70,7 +70,7 @@ export default {
                 }
             })
                 .then(resp => {
-                    console.log("getinfo 响应数据:", resp.data); // 打印响应数据
+                    // console.log("getinfo 响应数据:", resp.data); // 打印响应数据
                     if (resp.data.error_message === "success") {
                         context.commit("updateUser", {
                             ...resp.data,
