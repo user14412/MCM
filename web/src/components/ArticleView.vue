@@ -22,7 +22,7 @@
         <div class="d-flex gap-3">
           <div class="like-box d-flex align-items-center gap-0" @click="toggleLike">
             <div class="img-box">
-              <svg v-if="isLiked" t="1744265836846" class="icon" viewBox="0 0 1024 1024" version="1.1"
+              <svg v-if="article.isLiked" t="1744265836846" class="icon" viewBox="0 0 1024 1024" version="1.1"
                 xmlns="http://www.w3.org/2000/svg" p-id="1456" width="200" height="200">
                 <path
                   d="M982.016 425.984l-2.005333 4.010667 2.005333 0 0 82.005333q0 16-6.016 32l-130.005333 299.989333q-20.010667 52.010667-77.994667 52.010667l-384 0q-34.005333 0-59.989333-25.984t-25.984-59.989333l0-425.984q0-34.005333 25.984-59.989333l280.021333-281.984 45.994667 45.994667q18.005333 18.005333 18.005333 43.989333l0 13.994667-41.984 196.010667 269.994667 0q34.005333 0 59.989333 25.002667t25.984 59.008zM41.984 896l0-512 171.989333 0 0 512-171.989333 0z"
@@ -35,12 +35,12 @@
                   fill="#000000" fill-opacity=".9" p-id="2745"></path>
               </svg>
             </div>
-            <span class="ms-2">{{ isLiked ? '已赞' : '点赞' }}</span>
+            <span class="ms-2">{{ article.isLiked ? '已赞' : '点赞' }}</span>
           </div>
 
-          <div class="like-box d-flex align-items-center gap-0" @click="toggleCollect">
+          <div class="like-box d-flex align-items-center gap-0" @click="toggleFavorite">
             <div class="img-box">
-              <svg v-if="isCollected" t="1744267313394" class="icon" viewBox="0 0 1024 1024" version="1.1"
+              <svg v-if="article.isFavorited" t="1744267313394" class="icon" viewBox="0 0 1024 1024" version="1.1"
                 xmlns="http://www.w3.org/2000/svg" p-id="2282" width="200" height="200">
                 <path
                   d="M485.173861 869.842745l-229.813553 120.819332a53.974999 53.974999 0 0 1-78.316666-56.898821l43.8912-255.899353a53.974999 53.974999 0 0 0-15.522222-47.777399L19.490266 448.857506a53.974999 53.974999 0 0 1 29.915556-92.06371l256.935108-37.338a53.974999 53.974999 0 0 0 40.639999-29.526088l114.909599-232.824864a53.974999 53.974999 0 0 1 96.802221 0l114.906776 232.824864a53.974999 53.974999 0 0 0 40.64 29.52891l256.93793 37.335178a53.974999 53.974999 0 0 1 29.915555 92.06371L815.170657 630.089326a53.974999 53.974999 0 0 0-15.522222 47.777399l43.888377 255.899353a53.974999 53.974999 0 0 1-78.316666 56.898821l-229.813552-120.819332a53.974999 53.974999 0 0 0-50.232733 0z"
@@ -53,12 +53,12 @@
                   fill="#333333" p-id="2439"></path>
               </svg>
             </div>
-            <span class="ms-2">{{ isCollected ? '已藏' : '收藏' }}</span>
+            <span class="ms-2">{{ article.isFavorited ? '已藏' : '收藏' }}</span>
           </div>
         </div>
 
         <!-- 删除 -->
-        <div class="like-box d-flex ms-md-auto align-items-center gap-0" @click="toggleCollect">
+        <div class="like-box d-flex ms-md-auto align-items-center gap-0">
           <div class="img-box">
             <svg t="1744269711841" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
               p-id="5284" width="200" height="200">
@@ -114,9 +114,9 @@ export default {
         author: '',
         photo: '',
         createtime: '',
+        isLiked: false,
+        isFavorited: false,
       },
-      isLiked: false,
-      isCollected: false,
     };
   },
   created() {
@@ -142,7 +142,12 @@ export default {
             author: response.data.username,
             photo: response.data.photo,
             createtime: response.data.createtime,
+            // 根据查询结果判断出来是否被点赞和收藏
+            isLiked: response.data.isLiked === "true" ? true : false,
+            isFavorited: response.data.isFavorited === "true" ? true : false,
           };
+          console.log("articleL: ", this.article.isLiked);
+          console.log("articleF: ", this.article.isFavorited);
         })
         .catch((error) => {
           console.log(error);
@@ -161,10 +166,13 @@ export default {
       });
     },
     toggleLike() {
-      this.isLiked = !this.isLiked;
+      console.log('toggleLike');
+      // toggleFavorite(this.articleId); // 通过文章id和用户id
+      this.fetchArticle();
     },
-    toggleCollect() {
-      this.isCollected = !this.isCollected;
+    toggleFavorite() {
+      console.log('toggleFavorite');
+      this.fetchArticle();
     },
   },
 };
