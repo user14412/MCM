@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import UserPostCard from './UserPostCard.vue';
+import UserPostCard from '@/views/user/profile/post/UserPostCard.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 import { reactive } from 'vue';
