@@ -38,7 +38,7 @@ public class AddArticleServiceImpl implements AddArticleService {
         Date now = new Date();
         Article article = new Article(null, userId, username, photo, title, content, now);
         articleMapper.insert(article);
-        System.out.println("插入文章：" + article);
+//        System.out.println("插入文章：" + article);
         return "add article success";
     }
 }

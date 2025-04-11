@@ -17,7 +17,7 @@ public class AddArticleController {
 
     @PostMapping("/article/add/")
     public String addArticle(@RequestBody Article data) { // 改为Map<String, Object>以兼容复杂类型
-        System.out.println("收到文章：" + data);
+//        System.out.println("收到文章：" + data);
         return addArticleService.addarticle(data);
     }
 }

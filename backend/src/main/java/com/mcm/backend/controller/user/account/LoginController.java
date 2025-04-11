@@ -20,7 +20,7 @@ public class LoginController {
 
         String username = data.getString("username");
         String password = data.getString("password");
-        System.out.println(username+ " " + password);
+//        System.out.println(username+ " " + password);
         return loginService.getToken(username, password);
     }
 }

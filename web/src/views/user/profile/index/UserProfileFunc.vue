@@ -6,8 +6,9 @@
 
       <UserProfilePost v-if="func == 11" />
       <UserProfileWrite v-if="func == 12" />
-      <!-- <UserProfileFavorite v-if="func == 2" /> -->
-      <UserProfileLike v-if="func == 3" />
+      <UserProfileFavorite v-if="func == 2" />
+      <UserProfileLikeExhibit v-if="func == 31" />
+      <UserProfileLikeArticle v-if="func == 32" />
       <UserProfileSysMessage v-if="func == 41" />
       <UserProfileMessage v-if="func == 42" />
       <UserProfileSetting v-if="func == 5" />
@@ -19,20 +20,23 @@
 import UserProfileNavBar from '@/views/user/profile/index/UserProfileNavBar.vue';
 import UserProfilePost from '@/views/user/profile/post/UserProfilePost.vue';
 import UserProfileWrite from '@/views/user/profile/post/UserProfileWrite.vue';
-// import UserProfileFavorite from '@/views/user/profile/favorite/UserProfileFavorite.vue';
-import UserProfileLike from '@/views/user/profile/like/UserProfileLike.vue';
+import UserProfileFavorite from '@/views/user/profile/favorite/UserProfileFavorite.vue';
+import UserProfileLikeExhibit from '@/views/user/profile/like/UserProfileLikeExhibit.vue';
+import UserProfileLikeArticle from '@/views/user/profile/like/UserProfileLikeArticle.vue';
 import UserProfileSysMessage from '@/views/user/profile/message/UserProfileSysMessage.vue';
 import UserProfileMessage from '@/views/user/profile/message/UserProfileMessage.vue';
 import UserProfileSetting from '@/views/user/profile/setting/UserProfileSetting.vue';
 import { ref } from 'vue';
+
 
 export default {
   components: {
     UserProfileNavBar,
     UserProfilePost, // 11
     UserProfileWrite, // 12
-    // UserProfileFavorite, // 2
-    UserProfileLike, // 3
+    UserProfileFavorite, // 2
+    UserProfileLikeExhibit, // 31
+    UserProfileLikeArticle, // 32
     UserProfileSysMessage, // 41
     UserProfileMessage, // 42
     UserProfileSetting, // 5

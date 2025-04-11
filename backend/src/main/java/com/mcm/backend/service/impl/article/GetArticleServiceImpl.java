@@ -51,6 +51,7 @@ public class GetArticleServiceImpl implements GetArticleService {
                             .eq("operation", "like")
                             .eq("category", "article")
             );
+            map.put("isLiked", likeTriclick != null ? "true" : "false");
             // 查询是否收藏
             Triclick favoriteTriclick = triclickMapper.selectOne(
                     new QueryWrapper<Triclick>()
@@ -59,11 +60,9 @@ public class GetArticleServiceImpl implements GetArticleService {
                             .eq("operation", "favorite")
                             .eq("category", "article")
             );
-
-            map.put("isLiked", likeTriclick != null ? "true" : "false");
             map.put("isFavorited", favoriteTriclick != null ? "true" : "false");
         }
-        System.out.println("resp返回：" + map);
+//        System.out.println("resp返回：" + map);
         return map;
     }
 }

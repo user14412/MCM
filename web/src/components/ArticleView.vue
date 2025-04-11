@@ -9,7 +9,8 @@
           <!-- 作者头像和名称 -->
           <router-link :to="{ name: 'user_profile_index' }"
             class="d-flex align-items-center gap-2 text-decoration-none text-dark">
-            <img :src="article.photo" class="avatar rounded-circle" style="width: 32px; height: 32px; object-fit: cover;">
+            <img :src="article.photo" class="avatar rounded-circle"
+              style="width: 32px; height: 32px; object-fit: cover;">
             <span>{{ article.author }}</span>
           </router-link>
         </div>
@@ -40,8 +41,8 @@
 
           <div class="like-box d-flex align-items-center gap-0" @click="toggleFavorite">
             <div class="img-box">
-              <svg v-if="article.isFavorited" t="1744267313394" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                xmlns="http://www.w3.org/2000/svg" p-id="2282" width="200" height="200">
+              <svg v-if="article.isFavorited" t="1744267313394" class="icon" viewBox="0 0 1024 1024"
+                version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2282" width="200" height="200">
                 <path
                   d="M485.173861 869.842745l-229.813553 120.819332a53.974999 53.974999 0 0 1-78.316666-56.898821l43.8912-255.899353a53.974999 53.974999 0 0 0-15.522222-47.777399L19.490266 448.857506a53.974999 53.974999 0 0 1 29.915556-92.06371l256.935108-37.338a53.974999 53.974999 0 0 0 40.639999-29.526088l114.909599-232.824864a53.974999 53.974999 0 0 1 96.802221 0l114.906776 232.824864a53.974999 53.974999 0 0 0 40.64 29.52891l256.93793 37.335178a53.974999 53.974999 0 0 1 29.915555 92.06371L815.170657 630.089326a53.974999 53.974999 0 0 0-15.522222 47.777399l43.888377 255.899353a53.974999 53.974999 0 0 1-78.316666 56.898821l-229.813552-120.819332a53.974999 53.974999 0 0 0-50.232733 0z"
                   fill="#231815" p-id="2283"></path>
@@ -96,6 +97,12 @@ export default {
       required: true,
     }
   },
+  setup() {
+    const store = useStore();
+    return {
+      store,
+    };
+  },
   watch: {
     articleId: {
       immediate: true,
@@ -124,7 +131,6 @@ export default {
   },
   methods: {
     fetchArticle() {
-      const store = useStore();
       axios({
         url: "http://127.0.0.1:3000/article/get/",
         method: "GET",
@@ -132,7 +138,7 @@ export default {
           ArticleId: this.articleId,
         },
         headers: {
-          Authorization: "Bearer " + store.state.user.token,
+          Authorization: "Bearer " + this.store.state.user.token,
         },
       })
         .then((response) => {
@@ -146,8 +152,6 @@ export default {
             isLiked: response.data.isLiked === "true" ? true : false,
             isFavorited: response.data.isFavorited === "true" ? true : false,
           };
-          console.log("articleL: ", this.article.isLiked);
-          console.log("articleF: ", this.article.isFavorited);
         })
         .catch((error) => {
           console.log(error);
@@ -167,12 +171,100 @@ export default {
     },
     toggleLike() {
       console.log('toggleLike');
-      // toggleFavorite(this.articleId); // 通过文章id和用户id
-      this.fetchArticle();
+      // 通过文章id和用户id[添加/删除]点赞记录
+      if(this.article.isLiked === false){
+        console.log('add');
+        // add
+        axios({
+          url: "http://127.0.0.1:3000/triclick/add/",
+          method: "POST",
+          params: {
+            to_id: this.articleId.toString(),
+            operation: "like",
+            category: "article"
+          },
+          headers: {
+            Authorization: "Bearer " + this.store.state.user.token,
+          },
+        })
+        .then((resp) => {
+          console.log("resp", resp); // 注意看msg
+          this.article.isLiked = !this.article.isLiked; // 切换图标
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+      }
+      else{
+        // remove
+        axios({
+          url: "http://127.0.0.1:3000/triclick/remove/",
+          method: "POST",
+          params: {
+            to_id: this.articleId.toString(),
+            operation: "like",
+            category: "article"
+          },
+          headers: {
+            Authorization: "Bearer " + this.store.state.user.token,
+          },
+        })
+          .then((resp) => {
+            console.log("resp", resp);
+            this.article.isLiked = !this.article.isLiked; // 切换图标
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
+      }
     },
     toggleFavorite() {
       console.log('toggleFavorite');
-      this.fetchArticle();
+      // 通过文章id和用户id[添加/删除]收藏记录
+      if (this.article.isFavorited === false) {
+        // add
+        axios({
+          url: "http://127.0.0.1:3000/triclick/add/",
+          method: "POST",
+          params: {
+            to_id: this.articleId.toString(),
+            operation: "favorite",
+            category: "article"
+          },
+          headers: {
+            Authorization: "Bearer " + this.store.state.user.token,
+          },
+        })
+          .then((resp) => {
+            console.log("resp", resp); // 注意看msg
+            this.article.isFavorited= !this.article.isFavorited; // 切换图标
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
+      }
+      else {
+        // remove
+        axios({
+          url: "http://127.0.0.1:3000/triclick/remove/",
+          method: "POST",
+          params: {
+            to_id: this.articleId.toString(),
+            operation: "favorite",
+            category: "article"
+          },
+          headers: {
+            Authorization: "Bearer " + this.store.state.user.token,
+          },
+        })
+          .then((resp) => {
+            console.log("resp", resp);
+            this.article.isFavorited = !this.article.isFavorited; // 切换图标
+          })
+          .catch((error) => {
+            console.log("error", error);
+          });
+      }
     },
   },
 };
