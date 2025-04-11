@@ -39,6 +39,7 @@ public class GetArticleServiceImpl implements GetArticleService {
         if(article != null){
             // 文章存在
             map.put("username", article.getUsername());
+            map.put("user_id", article.getUserId().toString());
             map.put("photo", article.getPhoto());
             map.put("title", article.getTitle());
             map.put("content", article.getContent());

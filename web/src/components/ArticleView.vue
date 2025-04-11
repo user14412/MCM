@@ -7,12 +7,13 @@
           <!-- 发布者标签 -->
           <span class="fw-bold">发布者:</span>
           <!-- 作者头像和名称 -->
-          <router-link :to="{ name: 'user_profile_index' }"
-            class="d-flex align-items-center gap-2 text-decoration-none text-dark">
+          <div @click="goToAuthor"
+            class="d-flex align-items-center gap-2 text-decoration-none text-dark"
+            style="cursor: pointer;">
             <img :src="article.photo" class="avatar rounded-circle"
               style="width: 32px; height: 32px; object-fit: cover;">
             <span>{{ article.author }}</span>
-          </router-link>
+        </div>
         </div>
         <!-- 发布时间 -->
         <span>发布时间：{{ formatDate(article.createtime) }}</span>
@@ -89,6 +90,7 @@
 // 参数：articleId
 import axios from 'axios';
 import { useStore } from 'vuex';
+import router from '@/router';
 
 export default {
   props: {
@@ -118,6 +120,7 @@ export default {
       article: {
         title: '',
         content: '',
+        author_id: 1,
         author: '',
         photo: '',
         createtime: '',
@@ -145,6 +148,7 @@ export default {
           this.article = { // 直接整体赋值
             title: response.data.title,
             content: response.data.content,
+            author_id: response.data.user_id,
             author: response.data.username,
             photo: response.data.photo,
             createtime: response.data.createtime,
@@ -169,8 +173,12 @@ export default {
         second: '2-digit'
       });
     },
+    goToAuthor(){
+      // 点击跳转到作者主页
+      console.log('goToAuthor');
+      router.push(`/user/profile/${this.article.author_id}`);
+    },
     toggleLike() {
-      console.log('toggleLike');
       // 通过文章id和用户id[添加/删除]点赞记录
       if(this.article.isLiked === false){
         console.log('add');
@@ -219,7 +227,6 @@ export default {
       }
     },
     toggleFavorite() {
-      console.log('toggleFavorite');
       // 通过文章id和用户id[添加/删除]收藏记录
       if (this.article.isFavorited === false) {
         // add

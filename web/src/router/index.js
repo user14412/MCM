@@ -13,6 +13,7 @@ import ExhibitIndexView from '@/views/exhibit/ExhibitIndexView.vue'
 import PanoramaIndexView from '@/views/panorama/PanoramaIndexView.vue'
 import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
 import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue'
+import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileDetailsIndexView.vue'
 
 const routes = [
   // 重定向
@@ -98,6 +99,14 @@ const routes = [
     path: "/user/profile/",
     name: "user_profile_index",
     component: UserProfileIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/user/profile/:userId/",
+    name: "user_profile_details_index",
+    component: UserProfileDetailsIndexView,
     meta: {
       requestAuth: true,
     },

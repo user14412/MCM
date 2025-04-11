@@ -1,12 +1,12 @@
 <!-- 个人中心 - 个人资料子组件 -->
 <template>
-  <div class="profile-container-fluid">
+  <div v-if="author != null && author != undefined" class="profile-container-fluid">
     <div class="row justify-content-center"> <!-- 新增居中布局 -->
       <div class="col-12 d-flex flex-column align-items-center"> <!-- 改为垂直布局 -->
         <!-- 头像容器 -->
         <div class="avatar-container-fluid">
           <img 
-            :src="user.photo" 
+            :src="author.photo" 
             alt="个人头像"
             class="profile-avatar"
           >
@@ -16,7 +16,7 @@
         <div class="divider-line my-2"></div>
 
         <!-- 用户名区域 -->
-        <div class="username text-center-fluid">{{ user.username }}</div>
+        <div class="username text-center-fluid">{{ author.username }}</div>
 
         <!-- 分割线 -->
         <div class="divider-line my-2"></div>
@@ -26,6 +26,7 @@
 </template>
 
 <script>
+import { ref } from 'vue';
 export default {
     props:{
         user: {
@@ -33,6 +34,13 @@ export default {
             required: true,
         }
     },
+    setup(props) {
+      console.log("输出", props.user);
+      const author = ref(props.user)
+      return {
+        author,
+      }
+    }
 }
 </script>
 
