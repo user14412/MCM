@@ -26,7 +26,7 @@ export default {
          
         // 获取用户点赞的所有文章的id列表
         axios({
-            url: "http://127.0.0.1:3000/article/getlist/like/",
+            url: "http://127.0.0.1:3000/article/getlist/favorite/",
             method: "GET",
             headers: {
                 Authorization: "Bearer " + store.state.user.token

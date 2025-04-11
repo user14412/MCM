@@ -68,15 +68,16 @@ const exhibits = ref([])
 const loading = ref(true)
 const error = ref(null)
 
-const fetchExhibits = async () => {
+const fetchLikeExhibits = async () => {
     axios({
-        url: "http://127.0.0.1:3000/exhibit/getlist/",
+        url: "http://127.0.0.1:3000/exhibit/getlist/favorite/",
         method: "GET",
         headers: {
             Authorization: "Bearer " + store.state.user.token,
         },
     })
         .then((resp) => {
+            console.log("resp1", resp);
             exhibits.value = resp.data;
             loading.value = false; // 加载完成
         })
@@ -87,7 +88,7 @@ const fetchExhibits = async () => {
 
 // 组件挂载时重新获取藏品列表
 onMounted(() => {
-    fetchExhibits();
+    fetchLikeExhibits();
 });
 
 // 响应式数据

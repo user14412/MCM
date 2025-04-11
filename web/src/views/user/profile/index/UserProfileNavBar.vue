@@ -25,6 +25,10 @@
                     @click.prevent="setActive((index + 1) * 10 + 1)">我的发布</a></li>
                 <li v-if="index === 0"><a class="dropdown-item" href="#"
                     @click.prevent="setActive((index + 1) * 10 + 2)">编辑文章</a></li>
+                <li v-if="index === 1"><a class="dropdown-item" href="#"
+                    @click.prevent="setActive((index + 1) * 10 + 1)">藏品</a></li>
+                <li v-if="index === 1"><a class="dropdown-item" href="#"
+                    @click.prevent="setActive((index + 1) * 10 + 2)">文章</a></li>
                 <li v-if="index === 2"><a class="dropdown-item" href="#"
                     @click.prevent="setActive((index + 1) * 10 + 1)">藏品</a></li>
                 <li v-if="index === 2"><a class="dropdown-item" href="#"
@@ -57,7 +61,8 @@ export default {
       },
       {
         name: '收藏',
-        number: 2,
+        dropdown: true,
+        number: 2, // 21 // 22
       },
       {
         name: '点赞',
