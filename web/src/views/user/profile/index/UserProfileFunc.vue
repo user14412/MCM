@@ -4,15 +4,15 @@
     <div class="card-body">
       <UserProfileNavBar @setActive="setActive" style="margin-top: -15px;" />
 
-      <UserProfilePost v-if="func == 11" />
-      <UserProfileWrite v-if="func == 12" />
-      <UserProfileFavoriteExhibit v-if="func == 21" />
-      <UserProfileFavoriteArticle v-if="func == 22" />
-      <UserProfileLikeExhibit v-if="func == 31" />
-      <UserProfileLikeArticle v-if="func == 32" />
-      <UserProfileSysMessage v-if="func == 41" />
-      <UserProfileMessage v-if="func == 42" />
-      <UserProfileSetting v-if="func == 5" />
+      <UserProfilePost v-if="func == 1" />
+      <UserProfileWrite v-if="func == 2" />
+      <UserProfileFavoriteExhibit v-if="func == 31" />
+      <UserProfileFavoriteArticle v-if="func == 32" />
+      <UserProfileLikeExhibit v-if="func == 41" />
+      <UserProfileLikeArticle v-if="func == 42" />
+      <UserProfileSysMessage v-if="func == 51" />
+      <UserProfileMessage v-if="func == 52" />
+      <UserProfileSetting v-if="func == 6" />
     </div>
   </div>
 </template>
@@ -34,15 +34,15 @@ import { ref } from 'vue';
 export default {
   components: {
     UserProfileNavBar,
-    UserProfilePost, // 11
-    UserProfileWrite, // 12
-    UserProfileFavoriteExhibit, // 21
-    UserProfileFavoriteArticle, // 22
-    UserProfileLikeExhibit, // 31
-    UserProfileLikeArticle, // 32
-    UserProfileSysMessage, // 41
-    UserProfileMessage, // 42
-    UserProfileSetting, // 5
+    UserProfilePost, // 1
+    UserProfileWrite, // 2
+    UserProfileFavoriteExhibit, // 31
+    UserProfileFavoriteArticle, // 32
+    UserProfileLikeExhibit, // 41
+    UserProfileLikeArticle, // 42
+    UserProfileSysMessage, // 51
+    UserProfileMessage, // 52
+    UserProfileSetting, // 6
   },
   setup(){
     let func = ref(11);

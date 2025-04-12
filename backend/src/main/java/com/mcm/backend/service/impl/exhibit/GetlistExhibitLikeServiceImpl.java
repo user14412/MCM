@@ -41,6 +41,10 @@ public class GetlistExhibitLikeServiceImpl implements GetlistExhibitLikeService 
                     .eq("category", "exhibit")
                     .orderByAsc("createtime");
         List<Triclick> triclickList = triclickMapper.selectList(queryWrapper);
+        if(triclickList.isEmpty()){
+            // 判空（不然会报错500）
+            return new ArrayList<Exhibit>();
+        }
 
         // 创建exhibitId到triclick记录的映射关系
         Map<Integer, Triclick> triclickMap = new HashMap<>();

@@ -5,34 +5,34 @@
       <div class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li v-for="(item, index) in navItems" :key="item.name" class="nav-item position-relative"
-            :class="{ 'dropdown': item.dropdown }">
+            :class="{ 'dropdown': activeIndex === index }">
             <!-- 常规导航项 -->
             <div v-if="!item.dropdown">
               <a class="nav-link hover-effect" :class="{ 'active-nav': activeIndex === index }" href="#"
-                @click="setActive(index)">
+                @click.prevent="setActive(index)">
                 {{ item.name }}
               </a>
             </div>
 
             <!-- 带下拉的导航项 -->
             <div v-else>
-              <a class="nav-link hover-effect dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                data-bs-auto-close="true" aria-expanded="false" :class="{ 'active-nav': activeIndex === index }">
+              <a class="nav-link hover-effect dropdown-toggle" :class="{ 'active-nav': activeIndex === index }" href="#"
+                role="button" data-bs-toggle="dropdown" @click.prevent="setActive((index + 1) * 10 + 1)">
                 {{ item.name }}
               </a>
               <ul class="dropdown-menu">
                 <li v-if="index === 2"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 1)">藏品</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 1)">藏品</a></li>
                 <li v-if="index === 2"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 2)">文章</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 2)">文章</a></li>
                 <li v-if="index === 3"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 1)">藏品</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 1)">藏品</a></li>
                 <li v-if="index === 3"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 2)">文章</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 2)">文章</a></li>
                 <li v-if="index === 4"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 1)">系统通知</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 1)">系统通知</a></li>
                 <li v-if="index === 4"><a class="dropdown-item" href="#"
-                    @click="setActive((index + 1) * 10 + 2)">我的回复</a></li>
+                    @click.prevent="setActive((index + 1) * 10 + 2)">我的回复</a></li>
               </ul>
             </div>
           </li>
@@ -44,11 +44,10 @@
 
 <script>
 import { ref, reactive } from 'vue'
-import { Dropdown } from 'bootstrap';
 
 export default {
   emits: ['setActive'], // 声明自定义事件
-  setup(props,context) {
+  setup(props, context) {
     let activeIndex = ref(0);
     let navItems = reactive([
       {
@@ -79,7 +78,7 @@ export default {
         number: 6,
       },
     ]);
-    
+
     const setActive = (index) => {
       // 非下拉菜单
       if (index <= 10) {
@@ -93,17 +92,7 @@ export default {
         activeIndex.value = Math.floor(index / 10) - 1; // 下标从0开始
         context.emit('setActive', index);
       }
-
-      // 关闭所有打开的下拉菜单
-      const dropdowns = document.querySelectorAll('.dropdown-toggle');
-      dropdowns.forEach(toggle => {
-        const dropdown = Dropdown.getInstance(toggle);
-        if (dropdown) {
-          dropdown.hide();
-        }
-      });
     }
-    setActive(0);
 
     return {
       activeIndex,

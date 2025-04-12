@@ -12,36 +12,39 @@
 
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle"
-              :class="(route_name == 'introduction_index' || route_name == 'news_index' || route_name == 'visit_guide_index') ? 'nav-link active' : 'nav-link'" href="#" role="button"
-              data-bs-toggle="dropdown" aria-expanded="false">
+              :class="(route_name == 'introduction_index' || route_name == 'news_index' || route_name == 'visit_guide_index') ? 'nav-link active' : 'nav-link'"
+              href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               本馆概况
             </a>
             <ul class="dropdown-menu">
               <li>
-                <router-link :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'"
+                <router-link @click="closeDropdown"
+                  :class="route_name == 'introduction_index' ? 'nav-link active':'nav-link'"
                   :to="{name: 'introduction_index'}">本馆概况</router-link>
               </li>
               <li>
-                <router-link :class="route_name == 'news_index' ? 'nav-link active':'nav-link'"
+                <router-link @click="closeDropdown" :class="route_name == 'news_index' ? 'nav-link active':'nav-link'"
                   :to="{name: 'news_index'}">新闻动态</router-link>
               </li>
               <li>
-                <router-link :class="route_name == 'visit_guide_index' ? 'nav-link active':'nav-link'"
+                <router-link @click="closeDropdown"
+                  :class="route_name == 'visit_guide_index' ? 'nav-link active':'nav-link'"
                   :to="{name: 'visit_guide_index'}">参观须知</router-link>
               </li>
             </ul>
           </li>
 
           <li class="nav-item">
-            <router-link :class="route_name == 'panorama_index' ? 'nav-link active':'nav-link'"
+            <router-link @click="closeDropdown" :class="route_name == 'panorama_index' ? 'nav-link active':'nav-link'"
               :to="{name: 'panorama_index'}">全景参观</router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="route_name == 'exhibit_index' ? 'nav-link active':'nav-link'"
+            <router-link @click="closeDropdown" :class="route_name == 'exhibit_index' ? 'nav-link active':'nav-link'"
               :to="{name: 'exhibit_index'}">馆藏展品</router-link>
           </li>
           <li class="nav-item">
-            <router-link :class="route_name == 'feedback_index' ? 'nav-link active':'nav-link'"
+            <router-link @click="closeDropdown"
+              :class="route_name == 'feedback_index' ? 'nav-link active':'nav-link'"
               :to="{name: 'feedback_index'}">问卷反馈</router-link>
           </li>
 
@@ -91,6 +94,7 @@ import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { useStore } from 'vuex';
 import router from '@/router/index'
+import { Dropdown } from 'bootstrap';
 
 export default{
   setup(){
@@ -104,10 +108,22 @@ export default{
       router.push({name: "user_account_login"});
     }
 
+    const closeDropdown = () => {
+      // 每当进入一个新页面后，关闭所有打开的下拉菜单
+      const dropdowns = document.querySelectorAll('.dropdown-toggle');
+      dropdowns.forEach(toggle => {
+        const dropdown = Dropdown.getInstance(toggle);
+        if (dropdown) {
+          dropdown.hide();
+        }
+      });
+    }
+
     return{
       store,
       route_name,
-      logout
+      logout,
+      closeDropdown,
     }
   }
 }
