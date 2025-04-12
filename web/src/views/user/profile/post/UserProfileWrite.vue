@@ -1,9 +1,9 @@
 <template>
   <div class="user-profile-post-container">
-    <div class="card shadow-sm">
-      <div class="card-header bg-primary text-white">
+    <!-- <div class="card shadow-sm"> -->
+      <!-- <div class="card-header bg-primary text-white">
         <h5 class="mb-0">编辑文章</h5>
-      </div>
+      </div> -->
 
       <div class="card-body">
         <div v-if="loading" class="d-flex justify-content-center align-items-center py-5">
@@ -20,7 +20,7 @@
             <div class="form-text text-end">{{ article.title.length }}/200</div>
           </div>
 
-          <div class="mb-4">
+          <div class="mb-4" style="margin-top: -20px;">
             <label class="form-label fw-bold">文章内容</label>
             <QuillEditor ref="quillEditor" v-model:content="article.content" contentType="html" :options="editorOptions"
               style="height: 400px;" @ready="onEditorReady" />
@@ -44,10 +44,10 @@
           </div>
         </div>
       </div>
-    </div>
+    <!-- </div> -->
 
     <!-- 模态框 -->
-    <div class="modal fade" id="confirmModal" ref="confirmModal" tabindex="-1">
+    <div class="modal fade " id="confirmModal" ref="confirmModal" tabindex="-1">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
