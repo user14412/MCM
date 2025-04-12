@@ -26,7 +26,7 @@ export default {
 
 <style>
 body {
-  background-image: url("./assets/images/shiroha.jpg");
+  background-image: url("./assets/images/sp_contents.jpg");
   background-size: cover;
   background-attachment: fixed;
     /* 新增这行 */

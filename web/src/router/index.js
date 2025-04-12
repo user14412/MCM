@@ -11,6 +11,7 @@ import ArticleIndexView from '@/views/introduction/ArticleIndexView.vue'
 import TestView from '@/views/error/TestView.vue'
 import ExhibitIndexView from '@/views/exhibit/ExhibitIndexView.vue'
 import PanoramaIndexView from '@/views/panorama/PanoramaIndexView.vue'
+import SurveyIndexView from '@/views/feedback/SurveyIndexView.vue'
 import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
 import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue'
 import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileDetailsIndexView.vue'
@@ -83,6 +84,14 @@ const routes = [
     path: "/panorama/",
     name: "panorama_index",
     component: PanoramaIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/survey/",
+    name: "survey_index",
+    component: SurveyIndexView,
     meta: {
       requestAuth: true,
     },

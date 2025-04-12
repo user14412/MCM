@@ -42,9 +42,29 @@
             <router-link @click="closeDropdown" :class="route_name == 'exhibit_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'exhibit_index' }">馆藏展品</router-link>
           </li>
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <router-link @click="closeDropdown" :class="route_name == 'feedback_index' ? 'nav-link active' : 'nav-link'"
               :to="{ name: 'feedback_index' }">问卷反馈</router-link>
+          </li> -->
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+              :class="(route_name == 'survey_index' || route_name == 'feedback_index') ? 'nav-link active' : 'nav-link'"
+              href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              问卷反馈
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <router-link @click="closeDropdown"
+                  :class="route_name == 'survey_index' ? 'nav-link active' : 'nav-link'"
+                  :to="{ name: 'survey_index' }">问卷调查</router-link>
+              </li>
+              <li>
+                <router-link @click="closeDropdown"
+                  :class="route_name == 'feedback_index' ? 'nav-link active' : 'nav-link'"
+                  :to="{ name: 'feedback_index' }">意见反馈</router-link>
+              </li>
+            </ul>
           </li>
 
         </ul>
