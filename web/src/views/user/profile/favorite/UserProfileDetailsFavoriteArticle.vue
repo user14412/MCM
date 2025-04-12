@@ -13,10 +13,16 @@ import axios from 'axios';
 
 
 export default {
+    props:{
+        userId: {
+            type: Number,
+            required: true,
+        }
+    },
     components: {
         UserPostCard,
     },
-    setup() {
+    setup(props) {
         const store = useStore();
         let user = computed(() => store.state.user);
         const posts = reactive({
@@ -29,7 +35,7 @@ export default {
             url: "http://127.0.0.1:3000/article/getlist/favorite/",
             method: "GET",
             params:{
-                userId: user.value.id,
+                userId: props.userId,
             },
             headers: {
                 Authorization: "Bearer " + store.state.user.token

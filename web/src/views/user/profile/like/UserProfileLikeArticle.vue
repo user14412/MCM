@@ -28,12 +28,15 @@ export default {
         axios({
             url: "http://127.0.0.1:3000/article/getlist/like/",
             method: "GET",
+            params:{
+                userId: user.value.id,
+            },
             headers: {
                 Authorization: "Bearer " + store.state.user.token
             },
         })
         .then((resp) =>{
-            console.log("resp", resp.data)
+            // console.log("resp", resp.data)
             posts.posts = resp.data;
             posts.count = posts.posts.length;
         })

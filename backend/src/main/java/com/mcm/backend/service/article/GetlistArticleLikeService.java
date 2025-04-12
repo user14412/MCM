@@ -5,5 +5,5 @@ import com.mcm.backend.pojo.Article;
 import java.util.List;
 
 public interface GetlistArticleLikeService {
-    List<Article> getlistArticleLike();
+    List<Article> getlistArticleLike(Integer userId);
 }

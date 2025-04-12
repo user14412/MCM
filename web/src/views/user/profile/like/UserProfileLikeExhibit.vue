@@ -72,6 +72,9 @@ const fetchLikeExhibits = async () => {
     axios({
         url: "http://127.0.0.1:3000/exhibit/getlist/like/",
         method: "GET",
+        params:{
+            userId: store.state.user.id,
+        },
         headers: {
             Authorization: "Bearer " + store.state.user.token,
         },

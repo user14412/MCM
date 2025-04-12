@@ -51,85 +51,113 @@
     </div>
 </template>
 
-<script setup>
+<script>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useStore } from 'vuex'
 import { onMounted } from 'vue'
 import axios from 'axios'
 
-const router = useRouter();
-const store = useStore();
+export default{
+    props:{
+        userId: {
+            type: Number,
+            required: true,
+        }
+    },
+    setup(props) {
+        const router = useRouter();
+        const store = useStore();
 
-// 藏品列表(从后端获取当前exhibit: id, primary_photo_id[外键], name, category; image: url[id === primary_photo_id])
-const exhibits = ref([])
+        // 藏品列表(从后端获取当前exhibit: id, primary_photo_id[外键], name, category; image: url[id === primary_photo_id])
+        const exhibits = ref([])
 
-// 添加加载状态和错误
-const loading = ref(true)
-const error = ref(null)
+        // 添加加载状态和错误
+        const loading = ref(true)
+        const error = ref(null)
 
-const fetchLikeExhibits = async () => {
-    axios({
-        url: "http://127.0.0.1:3000/exhibit/getlist/favorite/",
-        method: "GET",
-        params:{
-            userId: store.state.user.id,
-        },
-        headers: {
-            Authorization: "Bearer " + store.state.user.token,
-        },
-    })
-        .then((resp) => {
-            console.log("resp1", resp);
-            exhibits.value = resp.data;
-            loading.value = false; // 加载完成
-        })
-        .catch((err) => {
-            error.value = err;
+        const fetchLikeExhibits = async () => {
+            axios({
+                url: "http://127.0.0.1:3000/exhibit/getlist/favorite/",
+                method: "GET",
+                params:{
+                    userId: props.userId,
+                },
+                headers: {
+                    Authorization: "Bearer " + store.state.user.token,
+                },
+            })
+                .then((resp) => {
+                    console.log("resp1", resp);
+                    exhibits.value = resp.data;
+                    loading.value = false; // 加载完成
+                })
+                .catch((err) => {
+                    error.value = err;
+                });
+        }
+
+        // 组件挂载时重新获取藏品列表
+        onMounted(() => {
+            fetchLikeExhibits();
         });
+
+        // 响应式数据
+        const filterCategory = ref('') // 筛选类别
+        const searchKeyword = ref('') // 搜索关键字
+        const currentPage = ref(1)
+        const itemsPerPage = 12
+
+        // 获取藏品类别列表
+        const categories = computed(() =>
+            [...new Set(exhibits.value.map(e => e.category))]
+        )
+
+        // 获取筛选后的藏品列表
+        const filteredExhibits = computed(() =>
+            exhibits.value.filter(e =>
+                (filterCategory.value ? e.category === filterCategory.value : true) &&
+                e.name.includes(searchKeyword.value)
+            )
+        )
+
+        const totalItems = computed(() => filteredExhibits.value.length) // 筛选后的藏品总数
+        const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage)) // 总页数
+        const pageRange = computed(() =>
+            Array.from({ length: totalPages.value }, (_, i) => i + 1)
+        )
+
+        // 获取本页藏品列表
+        const paginatedExhibits = computed(() =>
+            filteredExhibits.value.slice(
+                (currentPage.value - 1) * itemsPerPage,
+                currentPage.value * itemsPerPage
+            )
+        )
+
+        // 方法
+        const resetPagination = () => currentPage.value = 1
+        const goToDetail = (id) => router.push(`/exhibit/${id}/`)
+
+        return {
+            exhibits,
+            loading,
+            error,
+            filterCategory,
+            searchKeyword,
+            currentPage,
+            itemsPerPage,
+            categories,
+            filteredExhibits,
+            totalItems,
+            totalPages,
+            pageRange,
+            paginatedExhibits,
+            resetPagination,
+            goToDetail,
+        }
+    }
 }
-
-// 组件挂载时重新获取藏品列表
-onMounted(() => {
-    fetchLikeExhibits();
-});
-
-// 响应式数据
-const filterCategory = ref('') // 筛选类别
-const searchKeyword = ref('') // 搜索关键字
-const currentPage = ref(1)
-const itemsPerPage = 12
-
-// 获取藏品类别列表
-const categories = computed(() =>
-    [...new Set(exhibits.value.map(e => e.category))]
-)
-
-// 获取筛选后的藏品列表
-const filteredExhibits = computed(() =>
-    exhibits.value.filter(e =>
-        (filterCategory.value ? e.category === filterCategory.value : true) &&
-        e.name.includes(searchKeyword.value)
-    )
-)
-
-const totalItems = computed(() => filteredExhibits.value.length) // 筛选后的藏品总数
-const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage)) // 总页数
-const pageRange = computed(() =>
-    Array.from({ length: totalPages.value }, (_, i) => i + 1)
-)
-
-// 获取本页藏品列表
-const paginatedExhibits = computed(() =>
-    filteredExhibits.value.slice(
-        (currentPage.value - 1) * itemsPerPage,
-        currentPage.value * itemsPerPage
-    )
-)
-
-// 方法
-const resetPagination = () => currentPage.value = 1
-const goToDetail = (id) => router.push(`/exhibit/${id}/`)
 </script>
 
 <style scoped>

@@ -19,13 +19,13 @@ import UserProfileFunc from "@/views/user/profile/index/UserProfileFunc.vue"
 import { computed } from "vue";
 import { useStore } from "vuex";
 
-export default{
-  components :{
+export default {
+  components: {
     ContentField,
     UserProfileInfo,
     UserProfileFunc,
   },
-  setup(){
+  setup() {
     const store = useStore();
     let user = computed(() => store.state.user);
 
@@ -35,7 +35,5 @@ export default{
   },
 }
 </script>
- 
-<style scoped>
 
-</style>
+<style scoped></style>

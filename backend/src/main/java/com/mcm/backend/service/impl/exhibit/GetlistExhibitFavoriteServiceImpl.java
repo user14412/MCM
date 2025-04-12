@@ -24,13 +24,13 @@ public class GetlistExhibitFavoriteServiceImpl implements GetlistExhibitFavorite
     TriclickMapper triclickMapper;
 
     @Override
-    public List<Exhibit> getlistExhibitFavorite() {
+    public List<Exhibit> getlistExhibitFavorite(Integer userId) {
         // 取出当前用户收藏的所有藏品信息作为一个list返回给前端
-        UsernamePasswordAuthenticationToken authenticationToken =
-                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
-        User user = loginUser.getUser();
-        Integer userId = user.getId();
+//        UsernamePasswordAuthenticationToken authenticationToken =
+//                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+//        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
+//        User user = loginUser.getUser();
+//        Integer userId = user.getId();
         /* TODO: 先查询triclick表中所有user_id==userId && operation=="like" && category=="exhibit"按 createtime从新到旧的顺序返回记录的to_id
                 再查询exhibit表中所有id==to_id的记录，返回为List，并使得List中的数据按triclick的createtime从新到旧排序。
         * */

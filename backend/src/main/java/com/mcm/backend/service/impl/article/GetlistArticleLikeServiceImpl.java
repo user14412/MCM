@@ -23,12 +23,12 @@ public class GetlistArticleLikeServiceImpl implements GetlistArticleLikeService 
     @Autowired
     ArticleMapper articleMapper;
     @Override
-    public List<Article> getlistArticleLike() {
-        UsernamePasswordAuthenticationToken authenticationToken =
-                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
-        User user = loginUser.getUser();
-        Integer userId = user.getId();
+    public List<Article> getlistArticleLike(Integer userId) {
+//        UsernamePasswordAuthenticationToken authenticationToken =
+//                (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+//        UserDetailsImpl loginUser = (UserDetailsImpl) authenticationToken.getPrincipal();
+//        User user = loginUser.getUser();
+//        Integer userId = user.getId();
 
         QueryWrapper<Triclick> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userId)
@@ -49,7 +49,7 @@ public class GetlistArticleLikeServiceImpl implements GetlistArticleLikeService 
                                                     .collect(Collectors.toList());
         List<Article> articlesList = articleMapper.selectBatchIds(articleIdList);
         articlesList.sort(Comparator.comparing(article -> triclickMap.get(article.getId()).getCreatetime()));
-        Collections.reverse(articleIdList);
+        Collections.reverse(articlesList);
         return articlesList;
     }
 }

@@ -13,10 +13,16 @@ import axios from 'axios';
 
 
 export default {
+  props: {
+    userId: {
+      type: Number,
+      required: true,
+    },
+  },
   components: {
     UserPostCard,
   },
-  setup(){
+  setup(props){
     const store = useStore();
     let user = computed(() => store.state.user);
     const posts = reactive({
@@ -28,13 +34,14 @@ export default {
       url: "http://127.0.0.1:3000/article/get/user/",
       method: "GET",
       params: {
-        userId: user.value.id,
+        userId: props.userId,
       },
       headers: {
         Authorization: "Bearer " + store.state.user.token
       }
     })
       .then(response => {
+        console.log("response", response.data)
         // console.log("getArticleByUser 请求成功:", response.data);
         posts.posts = response.data; // 响应数据需从response.data获取[1,5](@ref)
         posts.count = posts.posts.length;

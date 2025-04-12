@@ -1,4 +1,4 @@
-<!-- 个人中心页面 -->
+ <!-- id = 参数userId 的个人中心 -->
 <template>
   <ContentField>
     <div class="row">
@@ -7,8 +7,7 @@
         <UserProfileInfo v-if="user" :user="user" />
       </div>
       <div class="col-9">
-        <!-- <UserProfileFunc /> -->
-         功能区
+         <UserProfileDetailsFunc :userId="userId"/>
       </div>
     </div>
   </ContentField>
@@ -17,7 +16,7 @@
 <script>
 import ContentField from "@/components/ContentField.vue"
 import UserProfileInfo from "@/views/user/profile/index/UserProfileInfo.vue"
-// import UserProfileFunc from "@/views/user/profile/index/UserProfileFunc.vue"
+import UserProfileDetailsFunc from "@/views/user/profile/index/UserProfileDetailsFunc.vue"
 // import { computed } from "vue";
 import { useStore } from "vuex";
 import { ref } from "vue";
@@ -28,7 +27,7 @@ export default{
   components :{
     ContentField,
     UserProfileInfo,
-    // UserProfileFunc,
+    UserProfileDetailsFunc,
   },
   setup(){
     const store = useStore();
@@ -58,6 +57,7 @@ export default{
 
     return {
       user,
+      userId,
     }
   },
 }

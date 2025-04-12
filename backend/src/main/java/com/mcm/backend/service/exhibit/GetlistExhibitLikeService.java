@@ -5,5 +5,5 @@ import com.mcm.backend.pojo.Exhibit;
 import java.util.List;
 
 public interface GetlistExhibitLikeService {
-    List<Exhibit> getlistExhibitLike();
+    List<Exhibit> getlistExhibitLike(Integer userId);
 }

@@ -176,7 +176,13 @@ export default {
     goToAuthor(){
       // 点击跳转到作者主页
       console.log('goToAuthor');
-      router.push(`/user/profile/${this.article.author_id}`);
+      if(this.article.author_id === this.store.state.user.id){
+        // 作者是本人
+        router.push({name: 'user_profile_index'});
+      }else{
+        // 作者是其他用户
+        router.push(`/user/profile/${this.article.author_id}`);
+      }
     },
     toggleLike() {
       // 通过文章id和用户id[添加/删除]点赞记录

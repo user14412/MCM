@@ -5,5 +5,5 @@ import com.mcm.backend.pojo.Article;
 import java.util.List;
 
 public interface GetlistArticleFavoriteService {
-    List<Article> getlistArticleFavorite();
+    List<Article> getlistArticleFavorite(Integer userId);
 }

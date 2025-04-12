@@ -5,11 +5,7 @@
       <div class="col-12 d-flex flex-column align-items-center"> <!-- 改为垂直布局 -->
         <!-- 头像容器 -->
         <div class="avatar-container-fluid">
-          <img 
-            :src="author.photo" 
-            alt="个人头像"
-            class="profile-avatar"
-          >
+          <img :src="author.photo" alt="个人头像" class="profile-avatar">
         </div>
 
         <!-- 分割线 -->
@@ -28,19 +24,19 @@
 <script>
 import { ref } from 'vue';
 export default {
-    props:{
-        user: {
-            type: Object,
-            required: true,
-        }
-    },
-    setup(props) {
-      console.log("输出", props.user);
-      const author = ref(props.user)
-      return {
-        author,
-      }
+  props: {
+    user: {
+      type: Object,
+      required: true,
     }
+  },
+  setup(props) {
+    console.log("输出", props.user);
+    const author = ref(props.user)
+    return {
+      author,
+    }
+  }
 }
 </script>
 
@@ -53,22 +49,28 @@ export default {
   width: 240px;
   height: 240px;
   margin-top: 10px;
-  margin-bottom: 0.5rem;  /* 增加头像底部间距 */
+  margin-bottom: 0.5rem;
+  /* 增加头像底部间距 */
 }
 
 .profile-avatar {
   width: 100%;
   height: 100%;
-  border-radius: 12px; /* 调整圆角程度[1,2](@ref) */
-  object-fit: cover;   /* 保持图片比例[4,6](@ref) */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* 添加柔和阴影 */
+  border-radius: 12px;
+  /* 调整圆角程度[1,2](@ref) */
+  object-fit: cover;
+  /* 保持图片比例[4,6](@ref) */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  /* 添加柔和阴影 */
 }
 
 .divider-line {
-  width: 90%;  /* 控制分割线长度 */
+  width: 90%;
+  /* 控制分割线长度 */
   height: 1px;
   background-color: #eee;
-  margin: rem auto;  /* 垂直间距控制 */
+  margin: rem auto;
+  /* 垂直间距控制 */
 }
 
 .username {
@@ -83,12 +85,12 @@ export default {
     width: 100px;
     height: 100px;
   }
-  
+
   .divider-line {
     width: 50%;
     margin: 0.8rem auto;
   }
-  
+
   .username {
     font-size: 1.3rem;
   }
