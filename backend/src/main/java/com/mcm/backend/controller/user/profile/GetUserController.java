@@ -14,9 +14,9 @@ public class GetUserController {
     GetUserService getUserService;
     @GetMapping("/user/profile/get/")
     User getUser(@RequestParam Integer userId){
-        System.out.println("userId " + userId);
+//        System.out.println("userId " + userId);
         User res = getUserService.getUser(userId);
-        System.out.println("返回：" + res);
+//        System.out.println("返回：" + res);
         return res;
     }
 }
