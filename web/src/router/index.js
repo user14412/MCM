@@ -15,6 +15,7 @@ import SurveyIndexView from '@/views/feedback/SurveyIndexView.vue'
 import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
 import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue'
 import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileDetailsIndexView.vue'
+import SurveyDetailsIndexView from '@/views/feedback/SurveyDetailsIndexView.vue'
 
 const routes = [
   // 重定向
@@ -92,6 +93,14 @@ const routes = [
     path: "/survey/",
     name: "survey_index",
     component: SurveyIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/survey/:surveyId/",
+    name: "survey_details_index",
+    component: SurveyDetailsIndexView,
     meta: {
       requestAuth: true,
     },

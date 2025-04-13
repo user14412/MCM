@@ -1,16 +1,22 @@
 <template>
-    <ContentField>
+    <div>
         问卷调查
-    </ContentField>
+    </div>
 </template>
 
 <script>
-import ContentField from "@/components/ContentField.vue"
+import { useRouter } from 'vue-router';
 
 export default {
-    components: {
-        ContentField,
-    },
+    setup() {
+        const router = useRouter();
+        const surveyId = 2;
+
+        router.push({path: `/survey/${surveyId}`});
+
+        return {
+        };
+    }
 }
 </script>
 
