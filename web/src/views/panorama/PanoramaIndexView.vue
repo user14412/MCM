@@ -21,18 +21,53 @@ export default{
     setup(){
         const initPannellum = () => {
             const viewer = window.pannellum.viewer('panorama', {
-                type: 'equirectangular',
-                panorama: require('@/assets/panorama/sphere.jpg'),
-                "autoLoad": true, // 自动加载
-                "autoRotate": -2, // 自动旋转：每秒顺时针旋转2°
-                // "preview": "@/assets/images/shiroha.jpg", // 设置预览图片
-                "title": "山谷", // 设置标题
-                "author": "Yan Zan", // 设置作者
-                // "northOffset": 247.5, // 设置指南针
-                // "pitch": 2.3, // 设置初始视图
-                // "yaw": -135.4, // 同上
-                // "hfov": 120, // 同上
-                "showControls": false,
+                "default": {
+                    "autoLoad": true, // 自动加载
+                    "firstScene": "circle",
+                    "author": "Matthew Petroff",
+                    "sceneFadeDuration": 1000,
+                    "showControls": false,
+                },
+                "scenes": {
+                    "circle": {
+                        "title": "Mason Circle",
+                        "hfov": 110,
+                        "pitch": -3,
+                        "yaw": 117,
+                        "type": "equirectangular",
+                        "panorama": require("@/assets/panorama/sphere.jpg"),
+                        "showControls": false,
+                        "hotSpots": [
+                            {
+                                "pitch": 0,
+                                "yaw": 0,
+                                "type": "scene",
+                                "text": "Spring House or Dairy",
+                                "sceneId": "house"
+                            }
+                        ]
+                    },
+
+                    "house": {
+                        "title": "Spring House or Dairy",
+                        "hfov": 110,
+                        "yaw": 5,
+                        "type": "equirectangular",
+                        "panorama": require("@/assets/panorama/artist.jpg"),
+                        "showControls": false,
+                        "hotSpots": [
+                            {
+                                "pitch": -0.6,
+                                "yaw": 37.1,
+                                "type": "scene",
+                                "text": "Mason Circle",
+                                "sceneId": "circle",
+                                "targetYaw": -23,
+                                "targetPitch": 2
+                            }
+                        ]
+                    }
+                }
             });
 
             // Make buttons work
@@ -58,6 +93,7 @@ export default{
                 viewer.toggleFullscreen();
             });
         }
+
         onMounted(() => {
             // 确保脚本加载完成后初始化
             if(typeof window.pannellum != 'undefined'){
@@ -69,6 +105,21 @@ export default{
                 document.head.appendChild(script);
             }
         })
+
+        // Hot spot creation function
+        function hotspot(hotSpotDiv, args) {
+            hotSpotDiv.classList.add('custom-tooltip');
+            var span = document.createElement('span');
+            span.innerHTML = args;
+            hotSpotDiv.appendChild(span);
+            span.style.width = span.scrollWidth - 20 + 'px';
+            span.style.marginLeft = -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + 'px';
+            span.style.marginTop = -span.scrollHeight - 12 + 'px';
+        }
+        
+        return {
+            hotspot,
+        }
     }
 }
 </script>
@@ -78,6 +129,8 @@ export default{
     width: 1200px;
     height: 800px;
 }
+
+/* 控制栏 */
 #controls {
     position: absolute;
     bottom: 0;
@@ -101,4 +154,41 @@ export default{
 .ctrl:hover {
     background: rgba(200, 200, 200, 1);
 }
+
+/* 热点 */
+/* .custom-hotspot {
+    height: 50px;
+    width: 50px;
+    background: #f00;
+}
+
+div.custom-tooltip span {
+    visibility: hidden;
+    position: absolute;
+    border-radius: 3px;
+    background-color: #fff;
+    color: #000;
+    text-align: center;
+    max-width: 200px;
+    padding: 5px 10px;
+    margin-left: -220px;
+    cursor: default;
+}
+
+div.custom-tooltip:hover span {
+    visibility: visible;
+}
+
+div.custom-tooltip:hover span:after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 10px;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+    bottom: -20px;
+    left: -10px;
+    margin: 0 50%;
+} */
 </style>
