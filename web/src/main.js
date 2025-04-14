@@ -6,7 +6,7 @@ import '@/assets/iconfont/iconfont.css'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap';
 
-createApp(App).use(store).use(router).mount('#app')
-
+const app = createApp(App)
+app.use(store).use(router).mount('#app')
 
 document.title = 'HEU海洋文化馆官网';

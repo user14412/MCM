@@ -1,40 +1,38 @@
 <template>
-    <div class="d-flex justify-content-center align-items-center min-vh-100">
-        <!-- 
-            d-flex → 启用 Flexbox
-            justify-content-center → 水平居中
-            align-items-center → 垂直居中
-            min-vh-100 → 占满整个视口高度
-        -->
-        <!-- the viewer container must have a defined size -->
-        <div id="viewer" class="viewer" style="width: 80vw; height: 80vh;"></div>
+    <div class="panorama-containner d-flex justify-content-center align-items-center min-vh-100">
+        <div id="panorama"></div>
     </div>
 </template>
 
 <script>
-// import ContentField from "@/components/ContentField.vue"
-import { Viewer } from '@photo-sphere-viewer/core'; 
-import { onMounted } from "vue";
-import '@photo-sphere-viewer/core/index.css'; // 不引入会导致图片自动无限放大
+import { onMounted } from 'vue';
 
-export default {
-    components: {
-        // ContentField,
-    },
+export default{
     setup(){
-        onMounted(() => {
-            const imgURL = require('@/assets/panorama/sphere.jpg');
-            const viewer = new Viewer({
-                container: document.querySelector('#viewer'),
-                panorama: imgURL,
+        const initPannellum = () => {
+            window.pannellum.viewer('panorama', {
+                type: 'equirectangular',
+                panorama: require('@/assets/panorama/sphere.jpg')
             });
-            viewer
-        });
-        return{
-        };
+        }
+        onMounted(() => {
+            // 确保脚本加载完成后初始化
+            if(typeof window.pannellum != 'undefined'){
+                initPannellum();
+            }else{
+                const script = document.createElement('script')
+                script.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js'
+                script.onload = () => this.initPannellum();
+                document.head.appendChild(script);
+            }
+        })
     }
 }
 </script>
 
 <style scoped>
+#panorama {
+    width: 1200px;
+    height: 800px;
+}
 </style>
