@@ -196,6 +196,9 @@ export default {
 .nav-link.dropdown-toggle:hover {
   color: #0068ff !important;
 }
+.nav-link:hover{
+  color: #0068ff !important;
+}
 
 .user-menu {
   font-family: "Microsoft YaHei";

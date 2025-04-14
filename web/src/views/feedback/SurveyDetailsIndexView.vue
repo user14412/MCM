@@ -1,6 +1,6 @@
 <template>
     <ContentField>
-        <div v-if="loadding">正在加载</div>
+        <div v-if="loadding">正在加载 ...</div>
         <div v-else class="survey-container">
             <div class="survey-title">{{ title }}</div>
             <form @submit.prevent="submitSurvey">

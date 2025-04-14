@@ -139,6 +139,7 @@ const goToDetail = (id) => router.push(`/exhibit/${id}/`)
     cursor: pointer;
 }
 
+/* 悬停效果：0.2秒内卡片上移5px */
 .card:hover {
     transform: translateY(-5px);
     transition: transform 0.2s ease;
