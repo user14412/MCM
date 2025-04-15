@@ -19,52 +19,59 @@ import { onMounted } from 'vue';
 
 export default{
     setup(){
+        const firstScene = 'outside';
         const initPannellum = () => {
             const viewer = window.pannellum.viewer('panorama', {
                 "default": {
                     "autoLoad": true, // 自动加载
-                    "firstScene": "circle",
-                    "author": "Matthew Petroff",
-                    "sceneFadeDuration": 1000,
+                    "firstScene": `${firstScene}`,
+                    "author": "zanyyan123",
+                    "sceneFadeDuration": 1000, // 场景过渡1s
                     "showControls": false,
                 },
                 "scenes": {
-                    "circle": {
-                        "title": "Mason Circle",
+                    "inside": { // sceneId
+                        "title": "画家的工作室",
                         "hfov": 110,
                         "pitch": -3,
                         "yaw": 117,
                         "type": "equirectangular",
-                        "panorama": require("@/assets/panorama/sphere.jpg"),
-                        "showControls": false,
+                        "panorama": "https://i.imgur.com/PhBlDDt.jpeg",
                         "hotSpots": [
                             {
-                                "pitch": 0,
-                                "yaw": 0,
+                                "pitch": 0, // 正数代表向上的角度
+                                "yaw": 30, // 证书代表向右的角度
                                 "type": "scene",
-                                "text": "Spring House or Dairy",
-                                "sceneId": "house"
-                            }
+                                "text": "荒原秘境",
+                                "sceneId": "outside"
+                            },
+                            {
+                                "pitch": 0,
+                                "yaw": 150,
+                                "type": "info", // 提供信息
+                                "text": "画家的画",
+                                "targetYaw": -23,
+                                "targetPitch": 2
+                            },
                         ]
                     },
 
-                    "house": {
-                        "title": "Spring House or Dairy",
+                    "outside": {
+                        "title": "荒原秘境",
                         "hfov": 110,
                         "yaw": 5,
                         "type": "equirectangular",
-                        "panorama": require("@/assets/panorama/artist.jpg"),
-                        "showControls": false,
+                        "panorama": "https://i.imgur.com/m8XsNrp.jpeg",
                         "hotSpots": [
                             {
-                                "pitch": -0.6,
-                                "yaw": 37.1,
-                                "type": "scene",
-                                "text": "Mason Circle",
-                                "sceneId": "circle",
+                                "pitch": -5,
+                                "yaw": -28,
+                                "type": "scene", // 场景切换
+                                "text": "画家的工作室",
+                                "sceneId": 'inside',
                                 "targetYaw": -23,
                                 "targetPitch": 2
-                            }
+                            },
                         ]
                     }
                 }
