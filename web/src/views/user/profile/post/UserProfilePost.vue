@@ -1,22 +1,46 @@
 <template>
-    <div v-for="post in posts.posts" :key="post.id" class="article-item">
-          <UserPostCard :article="post"/>
+  <div>
+    <!-- 搜索区域 -->
+    <div class="mb-4">
+      <div class="input-group">
+        <input v-model="searchKeyword" type="text" class="form-control" placeholder="输入文章标题">
+        <button @click="resetPagination" class="btn btn-primary">搜索</button>
+      </div>
     </div>
+
+    <!-- 文章列表 -->
+    <div v-for="post in paginatedPosts" :key="post.id" class="article-item">
+      <UserPostCard :article="post" />
+    </div>
+
+    <!-- 分页控件 -->
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        <li class="page-item" :class="{ disabled: currentPage === 1 }">
+          <a class="page-link" href="#" @click.prevent="currentPage--">上一页</a>
+        </li>
+        <li class="page-item" v-for="page in pageRange" :key="page" :class="{ active: page === currentPage }">
+          <a class="page-link" href="#" @click.prevent="currentPage = page">{{ page }}</a>
+        </li>
+        <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+          <a class="page-link" href="#" @click.prevent="currentPage++">下一页</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
 </template>
 
 <script>
 import UserPostCard from '@/views/user/profile/post/UserPostCard.vue';
 import { useStore } from 'vuex';
-import { computed } from 'vue';
-import { reactive } from 'vue';
+import { computed, reactive, ref } from 'vue';
 import axios from 'axios';
-
 
 export default {
   components: {
     UserPostCard,
   },
-  setup(){
+  setup() {
     const store = useStore();
     let user = computed(() => store.state.user);
     const posts = reactive({
@@ -24,6 +48,12 @@ export default {
       posts: [],
     });
 
+    // 响应式数据
+    const searchKeyword = ref('');
+    const currentPage = ref(1);
+    const itemsPerPage = 5;
+
+    // 获取文章列表
     axios({
       url: "http://127.0.0.1:3000/article/get/user/",
       method: "GET",
@@ -35,38 +65,66 @@ export default {
       }
     })
       .then(response => {
-        // console.log("getArticleByUser 请求成功:", response.data);
-        posts.posts = response.data; // 响应数据需从response.data获取[1,5](@ref)
+        posts.posts = response.data;
         posts.count = posts.posts.length;
       })
       .catch(error => {
         if (error.response) {
-          // 服务器返回了非2xx状态码的错误
           console.error("getArticleByUser 请求失败:", error.response.data);
         } else {
-          // 网络错误或无响应（如跨域问题）
           console.error("网络错误:", error.message);
         }
       });
 
-    return{
+    // 计算属性
+    const filteredPosts = computed(() =>
+      posts.posts.filter(post =>
+        post.title.includes(searchKeyword.value)
+      )
+    );
+
+    const totalItems = computed(() => filteredPosts.value.length);
+    const totalPages = computed(() => Math.ceil(totalItems.value / itemsPerPage));
+    const pageRange = computed(() =>
+      Array.from({ length: totalPages.value }, (_, i) => i + 1)
+    );
+
+    const paginatedPosts = computed(() =>
+      filteredPosts.value.slice(
+        (currentPage.value - 1) * itemsPerPage,
+        currentPage.value * itemsPerPage
+      )
+    );
+
+    // 方法
+    const resetPagination = () => currentPage.value = 1;
+
+    return {
       user,
       posts,
-    }
-    }
+      searchKeyword,
+      currentPage,
+      totalPages,
+      pageRange,
+      paginatedPosts,
+      resetPagination,
+    };
   }
+}
 </script>
 
 <style scoped>
 .my-post-title {
-    font-size: 20px;
-    margin-bottom:20px;
+  font-size: 20px;
+  margin-bottom: 20px;
 }
-.article-item{
-  border-bottom: 1px solid #eee;  /* 修正拼写错误 */
-  padding: 12px 0;               /* 调整间距为12px */
+
+.article-item {
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
 }
+
 .article-item:not(:last-child) {
-  margin-bottom: 8px;  /* 新增间隔控制 */
+  margin-bottom: 8px;
 }
 </style>
