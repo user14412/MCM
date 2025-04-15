@@ -1,49 +1,50 @@
 <template>
   <div class="user-profile-post-container">
     <!-- <div class="card shadow-sm"> -->
-      <!-- <div class="card-header bg-primary text-white">
+    <!-- <div class="card-header bg-primary text-white">
         <h5 class="mb-0">编辑文章</h5>
       </div> -->
 
-      <div class="card-body">
-        <div v-if="loading" class="d-flex justify-content-center align-items-center py-5">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
-        </div>
-
-        <div v-else>
-          <div class="mb-4">
-            <label for="post-title" class="form-label fw-bold">文章标题</label>
-            <input type="text" class="form-control form-control-lg" id="post-title" v-model="article.title"
-              placeholder="请输入文章标题" maxlength="200" />
-            <div class="form-text text-end">{{ article.title.length }}/200</div>
-          </div>
-
-          <div class="mb-4" style="margin-top: -20px;">
-            <label class="form-label fw-bold">文章内容</label>
-            <QuillEditor ref="quillEditor" v-model:content="article.content" contentType="html" :options="editorOptions"
-              style="height: 400px;" @ready="onEditorReady" />
-          </div>
-
-          <div class="d-flex justify-content-end gap-3 mt-4">
-            <button class="btn btn-outline-secondary px-4" @click="handleCancel" :disabled="submitting">
-              取消
-            </button>
-
-            <button class="btn btn-primary px-4" @click="handleSubmit" :disabled="submitting">
-              <template v-if="submitting">
-                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                提交中...
-              </template>
-              <template v-else>
-                <i class="bi bi-check-circle me-2"></i>
-                提交
-              </template>
-            </button>
-          </div>
+    <div class="card-body">
+      <div v-if="loading" class="d-flex justify-content-center align-items-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
         </div>
       </div>
+
+      <div v-else>
+        <div class="mb-4">
+          <label for="post-title" class="form-label fw-bold">文章标题</label>
+          <input type="text" class="form-control form-control-lg" id="post-title" v-model="article.title"
+            placeholder="请输入文章标题" maxlength="200" />
+          <div class="form-text text-end">{{ article.title.length }}/200</div>
+        </div>
+
+        <div class="mb-4" style="margin-top: -20px;">
+          <label class="form-label fw-bold">文章内容</label>
+          <QuillEditor ref="quillEditor" v-model:content="article.content" contentType="html" :options="editorOptions"
+            style="height: 400px;" @ready="onEditorReady" />
+          <input ref="fileInput" type="file" hidden @change="handleImageUpload" />
+        </div>
+
+        <div class="d-flex justify-content-end gap-3 mt-4">
+          <button class="btn btn-outline-secondary px-4" @click="handleCancel" :disabled="submitting">
+            取消
+          </button>
+
+          <button class="btn btn-primary px-4" @click="handleSubmit" :disabled="submitting">
+            <template v-if="submitting">
+              <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+              提交中...
+            </template>
+            <template v-else>
+              <i class="bi bi-check-circle me-2"></i>
+              提交
+            </template>
+          </button>
+        </div>
+      </div>
+    </div>
     <!-- </div> -->
 
     <!-- 模态框 -->
@@ -83,6 +84,8 @@ export default {
   setup() {
     const store = useStore();
 
+    // const fileInput = ref(null); // 创建隐藏的input引用
+
     // 响应式数据
     const article = ref({
       title: '', // v-model
@@ -104,24 +107,55 @@ export default {
     const editorOptions = {
       theme: 'snow',
       modules: {
-        toolbar: [
-          ['bold', 'italic', 'underline', 'strike'],
-          ['blockquote', 'code-block'],
-          [{ header: 1 }, { header: 2 }],
-          [{ list: 'ordered' }, { list: 'bullet' }],
-          [{ script: 'sub' }, { script: 'super' }],
-          [{ indent: '-1' }, { indent: '+1' }],
-          [{ direction: 'rtl' }],
-          [{ size: ['small', false, 'large', 'huge'] }],
-          [{ header: [1, 2, 3, 4, 5, 6, false] }],
-          [{ color: [] }, { background: [] }],
-          [{ font: [] }],
-          [{ align: [] }],
-          ['clean'],
-          ['link', 'image', 'video'],
-        ],
-      },
-      placeholder: '请输入文章内容...',
+        toolbar: {
+          container: [
+            ['bold', 'italic', 'underline', 'strike'],
+            ['blockquote', 'code-block'],
+            [{ header: 1 }, { header: 2 }],
+            [{ list: 'ordered' }, { list: 'bullet' }],
+            [{ script: 'sub' }, { script: 'super' }],
+            [{ indent: '-1' }, { indent: '+1' }],
+            [{ direction: 'rtl' }],
+            [{ size: ['small', false, 'large', 'huge'] }],
+            [{ header: [1, 2, 3, 4, 5, 6, false] }],
+            [{ color: [] }, { background: [] }],
+            [{ font: [] }],
+            [{ align: [] }],
+            ['clean'],
+            ['link', 'image', 'video'],
+          ],
+          handlers: {
+            image: () => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = async () => {
+                const file = input.files[0];
+                if (file) {
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  try {
+                    const res = await axios.post('http://localhost:3000/test/', formData, {
+                      headers: { 
+                        Authorization: "Bearer " + store.state.user.token,
+                        'Content-Type': 'multipart/form-data' 
+                      }
+                    });
+                    const quill = quillEditor.value.getQuill();
+                    const range = quill.getSelection(true);
+                    quill.insertEmbed(range.index, 'image', res.data);
+                    quill.setSelection(range.index + 1);
+                  } catch (error) {
+                    console.error('上传失败:', error);
+                    showModal('错误', '图片上传失败');
+                  }
+                }
+              };
+              input.click();
+            }
+          }
+        }
+      }
     };
 
     // 显示模态框方法
