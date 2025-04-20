@@ -143,7 +143,7 @@ export default {
                     });
                     const quill = quillEditor.value.getQuill();
                     const range = quill.getSelection(true);
-                    quill.insertEmbed(range.index, 'image', res.data);
+                    quill.clipboard.dangerouslyPasteHTML(range.index, `<div style="text-align: center;"><img src="${res.data}" alt="Image" /></div>`);
                     quill.setSelection(range.index + 1);
                   } catch (error) {
                     console.error('上传失败:', error);
@@ -152,6 +152,15 @@ export default {
                 }
               };
               input.click();
+            },
+            video: () => {
+              const url = prompt('请输入视频URL');
+              if (url) {
+                const quill = quillEditor.value.getQuill();
+                const range = quill.getSelection(true);
+                quill.clipboard.dangerouslyPasteHTML(range.index, `<div style="text-align: center;"><iframe src="${url}" frameborder="0" allowfullscreen></iframe></div>`);
+                quill.setSelection(range.index + 1);
+              }
             }
           }
         }
@@ -346,5 +355,14 @@ export default {
   min-height: 300px;
   font-size: 1rem;
   line-height: 1.6;
+}
+:deep(.ql-editor img) {
+  display: block;
+  margin: 0 auto;
+}
+
+:deep(.ql-editor iframe) {
+  display: block;
+  margin: 0 auto;
 }
 </style>

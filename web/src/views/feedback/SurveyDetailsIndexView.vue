@@ -22,7 +22,7 @@
                                 </label>
                             </div>
                             <!-- 自定义选项 -->
-                            <div v-if="question.add_choice != null" class="form-check">
+                            <div v-if="question.add_choice != null && question.add_choice == true" class="form-check">
                                 <input class="form-check-input" type="radio" :id="'q_' + question.t_id + '_other'"
                                     value="other" v-model="answer[question.t_id].choice">
                                 <label class="form-check-label" :for="'q_' + question.t_id + '_other'">
@@ -54,7 +54,7 @@
                                 </label>
                             </div>
                             <!-- 自定义选项 -->
-                            <div v-if="question.add_choice != null" class="form-check">
+                            <div v-if="question.add_choice != null && question.add_choice == true" class="form-check">
                                 <input class="form-check-input" type="checkbox" :id="'q_' + question.t_id + '_other'"
                                     value="other" v-model="answer[question.t_id].choice"
                                     @change="validateMultiChoice(question)">

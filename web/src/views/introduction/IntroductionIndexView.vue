@@ -15,7 +15,7 @@ export default{
     ArticleView,
   },
   setup() {
-    const articleId = 3;
+    const articleId = 26;
     return {
       articleId,
     }

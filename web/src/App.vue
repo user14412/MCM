@@ -26,8 +26,7 @@ export default {
 
 <style>
 body {
-  /* background-image: url("./assets/images/sp_contents.jpg"); */
-  background-image: url("./assets/images/sp_contents.jpg");
+  background-image: url("@/assets/images/ocean_bg.png");
   background-size: cover;
   background-attachment: fixed;
     /* 新增这行 */

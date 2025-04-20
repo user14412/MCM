@@ -16,7 +16,7 @@ export default{
   },
   setup() {
     // const articleId = 4;
-    const articleId = 16;
+    const articleId = 27;
     return {
       articleId,
     }

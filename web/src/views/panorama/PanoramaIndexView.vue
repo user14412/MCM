@@ -15,11 +15,46 @@
 </template>
 
 <script>
-import { onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
-export default{
-    setup(){
+export default {
+    setup() {
         const firstScene = 'outside';
+        let currentAudio = ref(null); // 使用 ref 来跟踪当前播放的音频
+
+        // 热点点击处理函数
+        const handleInfoHotspotClick = (event, args) => {
+            const audioUrl = args.audioUrl;
+            if (!audioUrl) return;
+
+            if (currentAudio.value) {
+                // 如果当前有音频在播放
+                const previousAudioSrc = new URL(currentAudio.value.src).pathname;
+                const clickedAudioSrc = new URL(audioUrl, window.location.href).pathname;
+
+                currentAudio.value.pause(); // 暂停当前音频
+                currentAudio.value.currentTime = 0; // 重置播放时间
+
+                if (previousAudioSrc === clickedAudioSrc) {
+                    // 如果点击的是同一个热点，则停止播放并清除引用
+                    currentAudio.value = null;
+                    return;
+                }
+            }
+
+            // 创建新的 Audio 对象并播放
+            const audio = new Audio(audioUrl);
+            currentAudio.value = audio; // 更新当前播放的音频引用
+            audio.play();
+
+            // 监听播放结束事件，结束后清除引用
+            audio.addEventListener('ended', () => {
+                if (currentAudio.value === audio) {
+                     currentAudio.value = null;
+                }
+            }, { once: true }); // 使用 once 选项确保监听器只执行一次
+        };
+
         const initPannellum = () => {
             const viewer = window.pannellum.viewer('panorama', {
                 "default": {
@@ -51,7 +86,10 @@ export default{
                                 "type": "info", // 提供信息
                                 "text": "画家的画",
                                 "targetYaw": -23,
-                                "targetPitch": 2
+                                "targetPitch": 2,
+                                "audioUrl": require("@/assets/audio/test_audio.mp3"),
+                                "clickHandlerFunc": handleInfoHotspotClick,
+                                "clickHandlerArgs": { "audioUrl": require("@/assets/audio/test_audio.mp3") }
                             },
                         ]
                     },
@@ -102,13 +140,27 @@ export default{
         }
 
         onMounted(() => {
-            // 确保脚本加载完成后初始化
-            if(typeof window.pannellum != 'undefined'){
+            const scriptUrl = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js';
+            const cssUrl = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css';
+
+            // 检查 CSS 是否已加载
+            if (!document.querySelector(`link[href="${cssUrl}"]`)) {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = cssUrl;
+                document.head.appendChild(link);
+            }
+
+            // 检查 Pannellum 脚本是否已加载
+            if (typeof window.pannellum !== 'undefined') {
                 initPannellum();
-            }else{
-                const script = document.createElement('script')
-                script.src = 'https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js'
-                script.onload = () => this.initPannellum();
+            } else {
+                const script = document.createElement('script');
+                script.src = scriptUrl;
+                script.onload = () => {
+                    // 确保在脚本加载后调用在 setup 中定义的 initPannellum
+                    initPannellum();
+                };
                 document.head.appendChild(script);
             }
         })
@@ -123,7 +175,7 @@ export default{
             span.style.marginLeft = -(span.scrollWidth - hotSpotDiv.offsetWidth) / 2 + 'px';
             span.style.marginTop = -span.scrollHeight - 12 + 'px';
         }
-        
+
         return {
             hotspot,
         }
