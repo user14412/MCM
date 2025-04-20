@@ -7,7 +7,7 @@
             <div class="row mb-4">
                 <div class="col-md-3">
                     <select v-model="filterCategory" class="form-select" @change="resetPagination">
-                        <option value="">所有类别</option>
+                        <option value="">所有展区</option>
                         <option v-for="category in categories" :key="category" :value="category">{{ category }}</option>
                     </select>
                 </div>

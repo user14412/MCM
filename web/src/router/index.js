@@ -16,6 +16,7 @@ import FeedbackIndexView from '@/views/feedback/FeedbackIndexView.vue'
 import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue'
 import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileDetailsIndexView.vue'
 import SurveyDetailsIndexView from '@/views/feedback/SurveyDetailsIndexView.vue'
+import PanoramaView from '@/views/panorama/PanoramaView.vue'
 
 const routes = [
   // 重定向
@@ -85,6 +86,14 @@ const routes = [
     path: "/panorama/",
     name: "panorama_index",
     component: PanoramaIndexView,
+    meta: {
+      requestAuth: true,
+    },
+  },
+  {
+    path: "/panorama/:sceneId/",
+    name: "PanoramaView",
+    component: PanoramaView,
     meta: {
       requestAuth: true,
     },
