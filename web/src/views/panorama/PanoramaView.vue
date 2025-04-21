@@ -2,6 +2,9 @@
     <div class="panorama-container d-flex justify-content-center align-items-center min-vh-100">
         <div id="panorama">
             <div class="visit-count">访问次数: {{ visitCount }}</div>
+            <div class="bgm-control ctrl" @click="toggleBgm" :title="isBgmPlaying ? '暂停背景音乐' : '播放背景音乐'">
+                {{ isBgmPlaying ? '&#9208;' : '&#9654;' }}
+            </div>
             <div id="controls">
                 <div class="ctrl" id="pan-up">&#9650;</div>
                 <div class="ctrl" id="pan-down">&#9660;</div>
@@ -16,7 +19,7 @@
 </template>
 
 <script>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router'; // 导入 useRoute
 import axios from 'axios'; // 导入 axios
 import { useStore } from 'vuex';
@@ -27,6 +30,8 @@ export default {
         const store = useStore();
         const sceneId = route.params.sceneId || 'scene1'; // 从路由参数获取 sceneId，提供默认值
         const visitCount = ref(0); // 添加 ref 来存储访问次数
+        const bgmAudio = ref(null); // 背景音乐 Audio 对象
+        const isBgmPlaying = ref(false); // 背景音乐播放状态
 
         let currentAudio = ref(null); // 使用 ref 来跟踪当前播放的音频
 
@@ -61,6 +66,21 @@ export default {
                      currentAudio.value = null;
                 }
             }, { once: true }); // 使用 once 选项确保监听器只执行一次
+        };
+
+        // 切换背景音乐播放/暂停
+        const toggleBgm = () => {
+            console.log("Toggling background music.");
+            if (!bgmAudio.value){
+                console.log("Background music is not initialized.");
+                return; // 如果背景音乐为空，则返回
+            }
+                if (isBgmPlaying.value) {
+                bgmAudio.value.pause();
+            } else {
+                bgmAudio.value.play();
+            }
+            // 状态会在 audio 元素的 onplay/onpause 事件中更新
         };
 
         const initPannellum = () => {
@@ -247,7 +267,44 @@ export default {
                 .catch(error => {
                     console.error('Error fetching visit count:', error);
                 })
+
+            // --- 初始化背景音乐 ---
+            // 请将 'YOUR_BGM_AUDIO_URL_HERE' 替换为你的背景音乐文件URL
+            const bgmUrl = require('@/assets/audio/Clair de Lune.mp3');
+            if (bgmUrl && bgmUrl !== 'YOUR_BGM_AUDIO_URL_HERE') { // 确保 URL 有效且不是占位符
+               try {
+                   bgmAudio.value = new Audio(bgmUrl);
+                   bgmAudio.value.loop = true;
+                   bgmAudio.value.volume = 0.3; // 可以设置一个合适的初始音量
+
+                   // 尝试自动播放
+                   bgmAudio.value.play().then(() => {
+                       isBgmPlaying.value = true;
+                       console.log("Background music started playing.");
+                   }).catch(error => {
+                       console.warn("Background music autoplay failed:", error);
+                       // 用户可能需要手动点击播放按钮启动音乐
+                       isBgmPlaying.value = false;
+                   });
+
+                   // 监听播放和暂停事件以同步状态
+                   bgmAudio.value.onplay = () => {
+                        console.log("Background music started playing.");
+                        isBgmPlaying.value = true;
+                    };
+                   bgmAudio.value.onpause = () => {
+                        console.log("Background music paused.");
+                        isBgmPlaying.value = false;
+                    };
+               } catch (e) {
+                   console.error("Error initializing background music:", e);
+               }
+            } else {
+               console.warn("Background music URL is not set or is invalid.");
+            }
+            // --- 背景音乐初始化结束 ---
         })
+
         // Hot spot creation function
         function hotspot(hotSpotDiv, args) {
             hotSpotDiv.classList.add('custom-tooltip');
@@ -259,9 +316,23 @@ export default {
             span.style.marginTop = -span.scrollHeight - 12 + 'px';
         }
 
+        // 组件卸载时清理背景音乐
+        onUnmounted(() => {
+            if (bgmAudio.value) {
+                bgmAudio.value.pause();
+                bgmAudio.value.onplay = null;
+                bgmAudio.value.onpause = null;
+                bgmAudio.value.src = ''; // 释放资源
+                bgmAudio.value = null;
+                console.log("Background music resources released.");
+            }
+        });
+
         return {
             hotspot,
             visitCount, // 返回 visitCount 使其在模板中可用
+            isBgmPlaying, // 返回背景音乐播放状态
+            toggleBgm,    // 返回切换函数
         }
     }
 }
@@ -285,6 +356,33 @@ export default {
     border-radius: 5px;
     z-index: 3; /* 确保在控制栏之上 */
     font-size: 14px;
+}
+
+/* 背景音乐控制按钮样式 */
+.bgm-control {
+    position: absolute;
+    left: 10px; /* 距离左侧距离 */
+    top: 50%;   /* 垂直居中 */
+    transform: translateY(-50%); /* 精确垂直居中 */
+    z-index: 3; /* 确保在访问次数和其他控件之上 */
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.5); /* 半透明背景 */
+    color: white;
+    border-radius: 50%; /* 圆形按钮 */
+    width: 35px;  /* 按钮宽度 */
+    height: 35px; /* 按钮高度 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px; /* 图标大小 */
+    line-height: 1; /* 避免额外行高影响居中 */
+    border: 1px solid rgba(255, 255, 255, 0.5); /* 可选：添加边框 */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 可选：添加阴影 */
+    transition: background-color 0.2s ease; /* 平滑过渡效果 */
+}
+
+.bgm-control:hover {
+    background: rgba(0, 0, 0, 0.7); /* 悬停时加深背景 */
 }
 
 /* 控制栏 */
