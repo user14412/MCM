@@ -20,4 +20,5 @@ public class Feedback {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createtime;
     private Integer userId;
+    private Boolean resolved;
 }

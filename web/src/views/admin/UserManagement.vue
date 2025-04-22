@@ -31,70 +31,76 @@
       </el-select>
     </div>
 
-    <el-table
-      :data="paginatedUsers"
-      :key="tableKey"
-      style="width: 100%"
-      v-loading="loading"
-    >
-      <el-table-column prop="id" label="ID" width="80" />
-      <el-table-column prop="username" label="用户名" />
-      <el-table-column prop="photo" label="头像" width="100">
-        <template #default="{ row }">
-          <el-avatar :size="40" :src="row.photo" />
-        </template>
-      </el-table-column>
-      <el-table-column prop="isAdmin" label="角色">
-        <template #default="{ row }">
-          <el-tag :type="row.isAdmin ? 'danger' : 'info'">
-            {{ row.isAdmin ? '管理员' : '普通用户' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="isBanned" label="状态">
-        <template #default="{ row }">
-          <el-tag :type="row.isBanned ? 'danger' : 'success'">
-            {{ row.isBanned ? '已封禁' : '正常' }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" width="200">
-        <template #default="{ row }">
-          <el-button
-            :type="row.isBanned ? 'success' : 'danger'"
-            size="small"
-            @click="handleToggleBan(row)"
-          >
-            {{ row.isBanned ? '解封' : '封禁' }}
-          </el-button>
-          <el-button
-            type="primary"
-            size="small"
-            @click="handleToggleAdmin(row)"
-            :disabled="row.isAdmin"
-          >
-            设为管理员
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="table-container">
+      <el-table
+        :data="paginatedUsers"
+        :key="tableKey"
+        style="width: 100%"
+        v-loading="loading"
+        :resize-observer="false"
+        :height="tableHeight"
+        :virtual-scroll="false"
+      >
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="username" label="用户名" />
+        <el-table-column prop="photo" label="头像" width="100">
+          <template #default="{ row }">
+            <el-avatar :size="40" :src="row.photo" />
+          </template>
+        </el-table-column>
+        <el-table-column prop="isAdmin" label="角色">
+          <template #default="{ row }">
+            <el-tag :type="row.isAdmin ? 'danger' : 'info'">
+              {{ row.isAdmin ? '管理员' : '普通用户' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column prop="isBanned" label="状态">
+          <template #default="{ row }">
+            <el-tag :type="row.isBanned ? 'danger' : 'success'">
+              {{ row.isBanned ? '已封禁' : '正常' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="200">
+          <template #default="{ row }">
+            <el-button
+              :type="row.isBanned ? 'success' : 'danger'"
+              size="small"
+              @click="handleToggleBan(row)"
+            >
+              {{ row.isBanned ? '解封' : '封禁' }}
+            </el-button>
+            <el-button
+              type="primary"
+              size="small"
+              @click="handleToggleAdmin(row)"
+              :disabled="row.isAdmin"
+            >
+              设为管理员
+            </el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
 
     <div class="pagination">
       <el-pagination
-        :current-page="currentPage"
-        :page-size="pageSize"
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
         :total="totalUsers"
         :page-sizes="[10, 20, 50, 100]"
         layout="total, sizes, prev, pager, next"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
+        :resize-observer="false"
       />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick, onBeforeUnmount } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import axios from 'axios'
@@ -109,45 +115,28 @@ const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const tableKey = ref(0)
+const totalUsers = ref(0)
+const tableHeight = ref(600)  // 设置固定高度
 
-// 获取筛选后的用户列表
-const filteredUsers = computed(() => {
-  return userList.value.filter(user => {
-    const matchesSearch = !searchQuery.value || 
-      user.id.toString().includes(searchQuery.value) || 
-      user.username.includes(searchQuery.value);
-    
-    const matchesRole = !filterRole.value || 
-      (filterRole.value === 'admin' && user.isAdmin) || 
-      (filterRole.value === 'user' && !user.isAdmin);
-    
-    const matchesStatus = !filterStatus.value || 
-      (filterStatus.value === 'active' && !user.isBanned) || 
-      (filterStatus.value === 'banned' && user.isBanned);
-    
-    return matchesSearch && matchesRole && matchesStatus;
-  });
-});
-
-// 计算总用户数
-const totalUsers = computed(() => filteredUsers.value.length);
-
-// 获取当前页的用户列表
-const paginatedUsers = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredUsers.value.slice(start, end);
-});
+const paginatedUsers = computed(() => userList.value)
 
 const fetchUsers = async () => {
   loading.value = true
   try {
     const response = await axios.get('http://127.0.0.1:3000/admin/users/', {
+      params: {
+        page: currentPage.value,
+        size: pageSize.value,
+        query: searchQuery.value,
+        role: filterRole.value,
+        status: filterStatus.value
+      },
       headers: {
         Authorization: 'Bearer ' + store.state.user.token
       }
     })
     userList.value = response.data.items
+    totalUsers.value = response.data.total || response.data.items.length
   } catch (error) {
     ElMessage.error('获取用户列表失败')
   } finally {
@@ -155,24 +144,29 @@ const fetchUsers = async () => {
   }
 }
 
-const handleSearch = () => {
+const handleSearch = async () => {
   currentPage.value = 1
-  tableKey.value++
+  await nextTick()
+  fetchUsers()
 }
 
-const handleFilterChange = () => {
+const handleFilterChange = async () => {
   currentPage.value = 1
-  tableKey.value++
+  await nextTick()
+  fetchUsers()
 }
 
-const handleSizeChange = (val) => {
+const handleSizeChange = async (val) => {
   pageSize.value = val
   currentPage.value = 1
-  tableKey.value++
+  await nextTick()
+  fetchUsers()
 }
 
-const handleCurrentChange = (val) => {
+const handleCurrentChange = async (val) => {
   currentPage.value = val
+  await nextTick()
+  fetchUsers()
 }
 
 const handleToggleBan = (user) => {
@@ -236,8 +230,20 @@ const handleToggleAdmin = (user) => {
   })
 }
 
+// 添加窗口大小变化监听
+const handleResize = () => {
+  // 可以根据需要调整表格高度
+  tableHeight.value = window.innerHeight - 300
+}
+
 onMounted(() => {
+  handleResize()
+  window.addEventListener('resize', handleResize)
   fetchUsers()
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 
@@ -246,6 +252,9 @@ onMounted(() => {
   background-color: #fff;
   padding: 20px;
   border-radius: 4px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .header {
@@ -253,6 +262,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .search-box {
@@ -263,11 +273,19 @@ onMounted(() => {
   margin-bottom: 20px;
   display: flex;
   gap: 10px;
+  flex-shrink: 0;
+}
+
+.table-container {
+  flex: 1;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .pagination {
   margin-top: 20px;
   display: flex;
   justify-content: flex-end;
+  flex-shrink: 0;
 }
 </style> 

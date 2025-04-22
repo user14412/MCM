@@ -35,6 +35,8 @@
       :data="paginatedExhibits"
       style="width: 100%"
       v-loading="loading"
+      :resize-observer="false"
+      :key="tableKey"
     >
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column label="主图" width="120">
@@ -67,6 +69,8 @@
         layout="total, sizes, prev, pager, next"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
+        :resize-observer="false"
+        :key="paginationKey"
       />
     </div>
 
@@ -161,7 +165,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import axios from 'axios'
@@ -188,6 +192,9 @@ const exhibitImages = ref([])
 const currentExhibitId = ref(null)
 const file = ref(null)
 const imageFile = ref(null)
+const totalExhibits = ref(0)
+const tableKey = ref(0)
+const paginationKey = ref(0)
 
 // 获取所有分类
 const categories = computed(() => {
@@ -208,14 +215,9 @@ const filteredExhibits = computed(() => {
   });
 });
 
-// 计算总展品数
-const totalExhibits = computed(() => filteredExhibits.value.length);
-
 // 获取当前页的展品列表
 const paginatedExhibits = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return filteredExhibits.value.slice(start, end);
+  return filteredExhibits.value
 });
 
 const fetchExhibits = async () => {
@@ -232,6 +234,7 @@ const fetchExhibits = async () => {
       }
     })
     exhibitList.value = response.data.items
+    totalExhibits.value = response.data.total || response.data.items.length
   } catch (error) {
     ElMessage.error('获取展品列表失败')
   } finally {
@@ -244,18 +247,30 @@ const handleSearch = () => {
   fetchExhibits()
 }
 
-const handleFilterChange = () => {
-  currentPage.value = 1
+const refreshComponents = () => {
+  tableKey.value++
+  paginationKey.value++
 }
 
-const handleSizeChange = (val) => {
-  pageSize.value = val
+const handleFilterChange = async () => {
   currentPage.value = 1
+  await nextTick()
+  refreshComponents()
   fetchExhibits()
 }
 
-const handleCurrentChange = (val) => {
+const handleSizeChange = async (val) => {
+  pageSize.value = val
+  currentPage.value = 1
+  await nextTick()
+  refreshComponents()
+  fetchExhibits()
+}
+
+const handleCurrentChange = async (val) => {
   currentPage.value = val
+  await nextTick()
+  refreshComponents()
   fetchExhibits()
 }
 

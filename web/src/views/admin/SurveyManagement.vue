@@ -191,26 +191,14 @@ const answerCurrentPage = ref(1)
 const answerPageSize = ref(10)
 const currentAnswer = ref(null)
 const currentSurveyId = ref(null)
+const totalSurveys = ref(0)
+const totalAnswers = ref(0)
 
 // 获取当前页的问卷列表
-const paginatedSurveys = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value;
-  const end = start + pageSize.value;
-  return surveyList.value.slice(start, end);
-});
+const paginatedSurveys = computed(() => surveyList.value)
 
 // 获取当前页的回答列表
-const paginatedAnswers = computed(() => {
-  const start = (answerCurrentPage.value - 1) * answerPageSize.value;
-  const end = start + answerPageSize.value;
-  return answerList.value.slice(start, end);
-});
-
-// 计算总问卷数
-const totalSurveys = computed(() => surveyList.value.length);
-
-// 计算总回答数
-const totalAnswers = computed(() => answerList.value.length);
+const paginatedAnswers = computed(() => answerList.value)
 
 const fetchSurveys = async () => {
   loading.value = true
@@ -225,6 +213,7 @@ const fetchSurveys = async () => {
       }
     })
     surveyList.value = response.data.items
+    totalSurveys.value = response.data.total || response.data.items.length
   } catch (error) {
     ElMessage.error('获取问卷列表失败')
   } finally {
@@ -358,6 +347,7 @@ const fetchAnswers = async () => {
       }
     );
     answerList.value = response.data.items;
+    totalAnswers.value = response.data.total || response.data.items.length;
   } catch (error) {
     console.error('获取回答列表失败：', error);
     ElMessage.error('获取回答列表失败：' + (error.response?.data?.message || error.message));

@@ -33,7 +33,7 @@ public class AddFeedbackServiceImpl implements AddFeedbackService {
             return "意见内容不能为空";
         }
 
-        Feedback feedback = new Feedback(null, contactInfo, content, null, user.getId());
+        Feedback feedback = new Feedback(null, contactInfo, content, null, user.getId(), null);
         feedbackMapper.insert(feedback);
 
         return "success";

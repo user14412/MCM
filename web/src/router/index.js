@@ -21,6 +21,7 @@ import AdminLayout from '@/views/admin/AdminLayout.vue'
 import UserManagement from '@/views/admin/UserManagement.vue'
 import ExhibitManagement from '@/views/admin/ExhibitManagement.vue'
 import SurveyManagement from '@/views/admin/SurveyManagement.vue'
+import FeedbackManagement from '@/views/admin/FeedbackManagement.vue'
 
 const routes = [
   // 重定向
@@ -200,6 +201,11 @@ const routes = [
         path: 'surveys',
         name: 'admin_surveys',
         component: SurveyManagement
+      },
+      {
+        path: 'feedbacks',
+        name: 'admin_feedbacks',
+        component: FeedbackManagement
       }
     ]
   },
