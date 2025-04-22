@@ -18,11 +18,6 @@ import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileD
 import SurveyDetailsIndexView from '@/views/feedback/SurveyDetailsIndexView.vue'
 import PanoramaView from '@/views/panorama/PanoramaView.vue'
 import AdminLayout from '@/views/admin/AdminLayout.vue'
-import UserManagement from '@/views/admin/UserManagement.vue'
-import ExhibitManagement from '@/views/admin/ExhibitManagement.vue'
-import SurveyManagement from '@/views/admin/SurveyManagement.vue'
-import FeedbackManagement from '@/views/admin/FeedbackManagement.vue'
-import StatisticsView from '@/views/admin/StatisticsView.vue'
 
 const routes = [
   // 重定向
@@ -191,35 +186,29 @@ const routes = [
       {
         path: 'users',
         name: 'admin_users',
-        component: UserManagement
+        component: () => import('@/views/admin/components/UserManagement.vue')
       },
       {
         path: 'exhibits',
         name: 'admin_exhibits',
-        component: ExhibitManagement
+        component: () => import('@/views/admin/components/ExhibitManagement.vue')
       },
       {
         path: 'surveys',
         name: 'admin_surveys',
-        component: SurveyManagement
+        component: () => import('@/views/admin/components/SurveyManagement.vue')
       },
       {
         path: 'feedbacks',
         name: 'admin_feedbacks',
-        component: FeedbackManagement
+        component: () => import('@/views/admin/components/FeedbackManagement.vue')
       },
       {
         path: 'statistics',
         name: 'admin_statistics',
-        component: StatisticsView
+        component: () => import('@/views/admin/components/StatisticsView.vue')
       }
     ]
-  },
-  {
-    path: '/admin/statistics',
-    name: 'Statistics',
-    component: () => import('../views/admin/StatisticsView.vue'),
-    meta: { requiresAuth: true, requiresAdmin: true }
   },
   // 错误处理
   {

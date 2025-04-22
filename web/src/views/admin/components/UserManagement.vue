@@ -1,17 +1,15 @@
 <template>
   <div class="user-management">
     <div class="header">
-      <h2>用户管理</h2>
+      <!-- <h2>用户管理</h2> -->
+      <div class="header-title">用户管理</div>
       <div class="search-box">
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索用户ID或用户名"
-          class="search-input"
-          @keyup.enter="handleSearch"
-        >
+        <el-input v-model="searchQuery" placeholder="搜索用户ID或用户名" class="search-input" @keyup.enter="handleSearch">
           <template #append>
             <el-button @click="handleSearch">
-              <el-icon><Search /></el-icon>
+              <el-icon>
+                <Search />
+              </el-icon>
             </el-button>
           </template>
         </el-input>
@@ -32,15 +30,8 @@
     </div>
 
     <div class="table-container">
-      <el-table
-        :data="paginatedUsers"
-        :key="tableKey"
-        style="width: 100%"
-        v-loading="loading"
-        :resize-observer="false"
-        :height="tableHeight"
-        :virtual-scroll="false"
-      >
+      <el-table :data="paginatedUsers" :key="tableKey" style="width: 100%" v-loading="loading" :resize-observer="false"
+        :height="tableHeight" :virtual-scroll="false">
         <el-table-column prop="id" label="ID" width="80" />
         <el-table-column prop="username" label="用户名" />
         <el-table-column prop="photo" label="头像" width="100">
@@ -64,19 +55,10 @@
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="{ row }">
-            <el-button
-              :type="row.isBanned ? 'success' : 'danger'"
-              size="small"
-              @click="handleToggleBan(row)"
-            >
+            <el-button :type="row.isBanned ? 'success' : 'danger'" size="small" @click="handleToggleBan(row)">
               {{ row.isBanned ? '解封' : '封禁' }}
             </el-button>
-            <el-button
-              type="primary"
-              size="small"
-              @click="handleToggleAdmin(row)"
-              :disabled="row.isAdmin"
-            >
+            <el-button type="primary" size="small" @click="handleToggleAdmin(row)" :disabled="row.isAdmin">
               设为管理员
             </el-button>
           </template>
@@ -85,16 +67,9 @@
     </div>
 
     <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :total="totalUsers"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :resize-observer="false"
-      />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="totalUsers"
+        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" :resize-observer="false" />
     </div>
   </div>
 </template>
@@ -263,6 +238,15 @@ onBeforeUnmount(() => {
   align-items: center;
   margin-bottom: 20px;
   flex-shrink: 0;
+}
+
+.header-title {
+  text-align: center;
+  color: #333;
+  margin: 0;
+  /* font-family: "SimHei", sans-serif !important; */
+  font-weight: 550 !important;
+  font-size: 1.5em;
 }
 
 .search-box {

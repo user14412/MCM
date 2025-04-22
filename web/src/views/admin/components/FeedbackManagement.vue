@@ -1,17 +1,14 @@
 <template>
   <div class="feedback-management">
     <div class="header">
-      <h2>反馈管理</h2>
+      <div class="header-title">反馈管理</div>
       <div class="search-box">
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索反馈ID、用户ID或用户名"
-          class="search-input"
-          @keyup.enter="handleSearch"
-        >
+        <el-input v-model="searchQuery" placeholder="搜索反馈ID、用户ID或用户名" class="search-input" @keyup.enter="handleSearch">
           <template #append>
             <el-button @click="handleSearch">
-              <el-icon><Search /></el-icon>
+              <el-icon>
+                <Search />
+              </el-icon>
             </el-button>
           </template>
         </el-input>
@@ -19,25 +16,14 @@
     </div>
 
     <div class="filter-box">
-      <el-select 
-        v-model="filterStatus" 
-        placeholder="筛选状态" 
-        clearable 
-        @change="handleFilterChange"
-        style="width: 200px;"
-      >
+      <el-select v-model="filterStatus" placeholder="筛选状态" clearable @change="handleFilterChange" style="width: 200px;">
         <el-option label="所有" value="" />
         <el-option label="未解决" :value="false" />
         <el-option label="已解决" :value="true" />
       </el-select>
     </div>
 
-    <el-table
-      :data="feedbackList"
-      style="width: 100%"
-      v-loading="loading"
-      :key="tableKey"
-    >
+    <el-table :data="feedbackList" style="width: 100%" v-loading="loading" :key="tableKey">
       <el-table-column prop="id" label="反馈ID" width="80" align="center" />
       <el-table-column label="用户信息" width="200" align="center">
         <template #default="{ row }">
@@ -55,11 +41,7 @@
         <template #default="{ row }">
           <div class="content-cell">
             <div class="content-preview">{{ truncateContent(row.content) }}</div>
-            <el-button 
-              v-if="row.content.length > 100" 
-              type="text" 
-              @click="showContentDetail(row)"
-            >
+            <el-button v-if="row.content.length > 100" type="text" @click="showContentDetail(row)">
               查看全文
             </el-button>
           </div>
@@ -79,19 +61,10 @@
       </el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template #default="{ row }">
-          <el-button
-            v-if="!row.resolved"
-            type="success"
-            size="small"
-            @click="handleResolve(row)"
-          >
+          <el-button v-if="!row.resolved" type="success" size="small" @click="handleResolve(row)">
             标记已解决
           </el-button>
-          <el-button
-            type="danger"
-            size="small"
-            @click="handleDelete(row)"
-          >
+          <el-button type="danger" size="small" @click="handleDelete(row)">
             删除
           </el-button>
         </template>
@@ -99,27 +72,16 @@
     </el-table>
 
     <!-- 内容详情对话框 -->
-    <el-dialog
-      v-model="contentDialogVisible"
-      title="反馈内容详情"
-      width="50%"
-      destroy-on-close
-    >
+    <el-dialog v-model="contentDialogVisible" title="反馈内容详情" width="50%" destroy-on-close>
       <div class="content-detail">
         {{ currentContent }}
       </div>
     </el-dialog>
 
     <div class="pagination">
-      <el-pagination
-        :current-page="currentPage"
-        :page-size="pageSize"
-        :total="total"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next, jumper"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination :current-page="currentPage" :page-size="pageSize" :total="total" :page-sizes="[10, 20, 50, 100]"
+        layout="total, sizes, prev, pager, next, jumper" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
   </div>
 </template>
@@ -279,7 +241,14 @@ onMounted(() => {
   margin-bottom: 20px;
   width: 100%;
 }
-
+.header-title {
+  text-align: center;
+  color: #333;
+  margin: 0;
+  /* font-family: "SimHei", sans-serif !important; */
+  font-weight: 550 !important;
+  font-size: 1.5em;
+}
 .search-box {
   width: 300px;
 }

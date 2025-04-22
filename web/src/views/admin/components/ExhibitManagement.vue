@@ -1,17 +1,15 @@
 <template>
   <div class="exhibit-management">
     <div class="header">
-      <h2>展品管理</h2>
+      <!-- <h2>展品管理</h2> -->
+      <div class="header-title">展品管理</div>
       <div class="search-box">
-        <el-input
-          v-model="searchQuery"
-          placeholder="搜索展品名称"
-          class="search-input"
-          @keyup.enter="handleSearch"
-        >
+        <el-input v-model="searchQuery" placeholder="搜索展品名称" class="search-input" @keyup.enter="handleSearch">
           <template #append>
             <el-button @click="handleSearch">
-              <el-icon><Search /></el-icon>
+              <el-icon>
+                <Search />
+              </el-icon>
             </el-button>
           </template>
         </el-input>
@@ -21,32 +19,18 @@
     <div class="filter-box">
       <el-select v-model="filterCategory" placeholder="分类筛选" clearable @change="handleFilterChange">
         <el-option label="所有" value="" />
-        <el-option 
-          v-for="category in categories" 
-          :key="category" 
-          :label="category" 
-          :value="category" 
-        />
+        <el-option v-for="category in categories" :key="category" :label="category" :value="category" />
       </el-select>
       <el-button type="primary" @click="handleAdd">添加展品</el-button>
     </div>
 
-    <el-table
-      :data="paginatedExhibits"
-      style="width: 100%"
-      v-loading="loading"
-      :resize-observer="false"
-      :key="tableKey"
-    >
+    <el-table :data="paginatedExhibits" style="width: 100%" v-loading="loading" :resize-observer="false"
+      :key="tableKey">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column label="主图" width="120">
         <template #default="{ row }">
-          <el-image 
-            :src="row.primaryPhoto" 
-            :preview-src-list="[row.primaryPhoto]"
-            fit="cover"
-            style="width: 80px; height: 80px;"
-          />
+          <el-image :src="row.primaryPhoto" :preview-src-list="[row.primaryPhoto]" fit="cover"
+            style="width: 80px; height: 80px;" />
         </template>
       </el-table-column>
       <el-table-column prop="name" label="名称" />
@@ -61,60 +45,30 @@
     </el-table>
 
     <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :total="totalExhibits"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :resize-observer="false"
-        :key="paginationKey"
-      />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="totalExhibits"
+        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" :resize-observer="false" :key="paginationKey" />
     </div>
 
     <!-- 添加/编辑展品对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="50%"
-    >
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="50%">
       <el-form :model="exhibitForm" label-width="80px">
         <el-form-item label="名称">
           <el-input v-model="exhibitForm.name" />
         </el-form-item>
         <el-form-item label="描述">
-          <el-input 
-            v-model="exhibitForm.comment" 
-            type="textarea" 
-            :rows="6"
-            placeholder="请输入展品描述，建议200字左右"
-          />
+          <el-input v-model="exhibitForm.comment" type="textarea" :rows="6" placeholder="请输入展品描述，建议200字左右" />
         </el-form-item>
         <el-form-item label="分类">
           <el-select v-model="exhibitForm.category">
-            <el-option 
-              v-for="category in categories" 
-              :key="category" 
-              :label="category" 
-              :value="category" 
-            />
+            <el-option v-for="category in categories" :key="category" :label="category" :value="category" />
           </el-select>
         </el-form-item>
         <el-form-item label="主图">
-          <input 
-            type="file" 
-            @change="handleFileChange"
-            accept="image/*"
-            style="margin-bottom: 10px;"
-          />
+          <input type="file" @change="handleFileChange" accept="image/*" style="margin-bottom: 10px;" />
           <el-button type="primary" @click="uploadFile">上传主图</el-button>
-          <el-image
-            v-if="exhibitForm.primaryPhoto"
-            :src="exhibitForm.primaryPhoto"
-            style="width: 100px; height: 100px; margin-top: 10px;"
-          />
+          <el-image v-if="exhibitForm.primaryPhoto" :src="exhibitForm.primaryPhoto"
+            style="width: 100px; height: 100px; margin-top: 10px;" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -126,35 +80,17 @@
     </el-dialog>
 
     <!-- 管理图片对话框 -->
-    <el-dialog
-      v-model="imageDialogVisible"
-      title="管理图片"
-      width="70%"
-    >
+    <el-dialog v-model="imageDialogVisible" title="管理图片" width="70%">
       <div class="image-management">
         <div class="upload-box">
-          <input 
-            type="file" 
-            @change="handleImageFileChange"
-            accept="image/*"
-            style="margin-bottom: 10px;"
-          />
+          <input type="file" @change="handleImageFileChange" accept="image/*" style="margin-bottom: 10px;" />
           <el-button type="primary" @click="uploadImageFile">上传图片</el-button>
         </div>
         <div class="image-grid">
           <div v-for="image in exhibitImages" :key="image.id" class="image-item">
-            <el-image
-              :src="image.url"
-              :preview-src-list="[image.url]"
-              fit="cover"
-              style="width: 150px; height: 150px;"
-            />
-            <el-button
-              type="danger"
-              size="small"
-              @click="handleDeleteImage(image)"
-              style="margin-top: 10px;"
-            >
+            <el-image :src="image.url" :preview-src-list="[image.url]" fit="cover"
+              style="width: 150px; height: 150px;" />
+            <el-button type="danger" size="small" @click="handleDeleteImage(image)" style="margin-top: 10px;">
               删除
             </el-button>
           </div>
@@ -515,6 +451,14 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+}
+.header-title {
+  text-align: center;
+  color: #333;
+  margin: 0;
+  /* font-family: "SimHei", sans-serif !important; */
+  font-weight: 550 !important;
+  font-size: 1.5em;
 }
 
 .search-box {

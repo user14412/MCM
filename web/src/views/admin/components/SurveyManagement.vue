@@ -1,15 +1,11 @@
 <template>
   <div class="survey-management">
     <div class="header">
-      <h2>问卷管理</h2>
+      <div class="header-title">问卷管理</div>
       <el-button type="primary" @click="handleAdd">创建问卷</el-button>
     </div>
 
-    <el-table
-      :data="paginatedSurveys"
-      style="width: 100%"
-      v-loading="loading"
-    >
+    <el-table :data="paginatedSurveys" style="width: 100%" v-loading="loading">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="title" label="标题" />
       <el-table-column prop="createtime" label="创建时间" width="180" />
@@ -23,23 +19,13 @@
     </el-table>
 
     <div class="pagination">
-      <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
-        :total="totalSurveys"
-        :page-sizes="[10, 20, 50, 100]"
-        layout="total, sizes, prev, pager, next"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-      />
+      <el-pagination v-model:current-page="currentPage" v-model:page-size="pageSize" :total="totalSurveys"
+        :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next" @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
     </div>
 
     <!-- 创建/编辑问卷对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="dialogTitle"
-      width="70%"
-    >
+    <el-dialog v-model="dialogVisible" :title="dialogTitle" width="70%">
       <el-form :model="surveyForm" label-width="80px">
         <el-form-item label="标题">
           <el-input v-model="surveyForm.title" />
@@ -64,7 +50,7 @@
               <el-form-item label="必做">
                 <el-switch v-model="question.required" />
               </el-form-item>
-              
+
               <!-- 单选题和多选题选项 -->
               <template v-if="question.type !== 'text'">
                 <el-form-item label="选项">
@@ -77,7 +63,7 @@
                 <el-form-item label="自定义选项">
                   <el-switch v-model="question.add_choice" />
                 </el-form-item>
-                
+
                 <!-- 多选题额外选项 -->
                 <template v-if="question.type === 'multiple'">
                   <el-form-item label="最少选择">
@@ -102,16 +88,8 @@
     </el-dialog>
 
     <!-- 查看回答对话框 -->
-    <el-dialog
-      v-model="answerDialogVisible"
-      title="问卷回答"
-      width="70%"
-    >
-      <el-table
-        :data="paginatedAnswers"
-        style="width: 100%"
-        v-loading="answerLoading"
-      >
+    <el-dialog v-model="answerDialogVisible" title="问卷回答" width="70%">
+      <el-table :data="paginatedAnswers" style="width: 100%" v-loading="answerLoading">
         <el-table-column prop="id" label="ID" width="100" align="center" />
         <el-table-column prop="userId" label="用户ID" width="120" align="center" />
         <el-table-column prop="createtime" label="提交时间" width="200" align="center" />
@@ -123,26 +101,18 @@
       </el-table>
 
       <div class="pagination">
-        <el-pagination
-          v-model:current-page="answerCurrentPage"
-          v-model:page-size="answerPageSize"
-          :total="totalAnswers"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next"
-          @size-change="handleAnswerSizeChange"
-          @current-change="handleAnswerCurrentChange"
-        />
+        <el-pagination v-model:current-page="answerCurrentPage" v-model:page-size="answerPageSize" :total="totalAnswers"
+          :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next" @size-change="handleAnswerSizeChange"
+          @current-change="handleAnswerCurrentChange" />
       </div>
     </el-dialog>
 
     <!-- 回答详情对话框 -->
-    <el-dialog
-      v-model="answerDetailDialogVisible"
-      title="回答详情"
-      width="50%"
-    >
+    <el-dialog v-model="answerDetailDialogVisible" title="回答详情" width="50%">
       <div v-if="currentAnswer" class="answer-detail">
-        <div v-for="(item, index) in (typeof currentAnswer.content === 'string' ? JSON.parse(currentAnswer.content) : currentAnswer.content)" :key="index" class="answer-item">
+        <div
+          v-for="(item, index) in (typeof currentAnswer.content === 'string' ? JSON.parse(currentAnswer.content) : currentAnswer.content)"
+          :key="index" class="answer-item">
           <div class="question-stem">第 {{ item.t_id }} 题</div>
           <div class="answer-content">
             <template v-if="Array.isArray(item.choice)">
@@ -434,7 +404,14 @@ onMounted(() => {
   margin-bottom: 20px;
   width: 100%;
 }
-
+.header-title {
+  text-align: center;
+  color: #333;
+  margin: 0;
+  /* font-family: "SimHei", sans-serif !important; */
+  font-weight: 550 !important;
+  font-size: 1.5em;
+}
 .pagination {
   margin-top: 20px;
   display: flex;
