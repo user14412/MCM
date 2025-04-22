@@ -22,6 +22,7 @@ import UserManagement from '@/views/admin/UserManagement.vue'
 import ExhibitManagement from '@/views/admin/ExhibitManagement.vue'
 import SurveyManagement from '@/views/admin/SurveyManagement.vue'
 import FeedbackManagement from '@/views/admin/FeedbackManagement.vue'
+import StatisticsView from '@/views/admin/StatisticsView.vue'
 
 const routes = [
   // 重定向
@@ -206,8 +207,19 @@ const routes = [
         path: 'feedbacks',
         name: 'admin_feedbacks',
         component: FeedbackManagement
+      },
+      {
+        path: 'statistics',
+        name: 'admin_statistics',
+        component: StatisticsView
       }
     ]
+  },
+  {
+    path: '/admin/statistics',
+    name: 'Statistics',
+    component: () => import('../views/admin/StatisticsView.vue'),
+    meta: { requiresAuth: true, requiresAdmin: true }
   },
   // 错误处理
   {

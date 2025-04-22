@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-layout" style="padding-top: 22px;">
+  <div class="admin-layout">
     <div class="admin-sidebar">
       <el-menu
         :default-active="activeMenu"
@@ -28,7 +28,7 @@
         </el-menu-item>
       </el-menu>
     </div>
-    <div class="admin-content" style="margin-top: 0px">
+    <div class="admin-content">
       <router-view></router-view>
     </div>
   </div>
@@ -46,11 +46,13 @@ const activeMenu = computed(() => route.path)
 <style scoped>
 .admin-layout {
   display: flex;
-  height: calc(100vh - 60px);
+  height: 100vh;
+  padding-top: 22px;
 }
 
 .admin-sidebar {
   width: 200px;
+  height: 100vh;
   background-color: #fff;
   border-right: 1px solid #e6e6e6;
 }
@@ -62,6 +64,7 @@ const activeMenu = computed(() => route.path)
 
 .admin-content {
   flex: 1;
+  height: 100vh;
   padding: 20px;
   overflow-y: auto;
   background-color: #f5f7fa;
