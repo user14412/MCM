@@ -84,6 +84,9 @@
               <li>
                 <router-link class="dropdown-item" :to="{ name: 'user_profile_index' }">个人中心</router-link>
               </li>
+              <li v-if="$store.state.user.is_admin">
+                <router-link class="dropdown-item" :to="{ name: 'admin_users' }">管理中心</router-link>
+              </li>
               <li>
                 <a class="dropdown-item" href="#" @click="logout">退出</a>
               </li>
@@ -152,6 +155,7 @@ export default {
 /* 确保导航栏在其他内容之上 */
 .navbar {
   z-index: 1060;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  /* 添加阴影效果 */
 }
 
 .nav-logo {

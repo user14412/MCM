@@ -15,4 +15,6 @@ public class User {
     private String username;
     private String password;
     private String photo;
+    private Boolean isAdmin;
+    private Boolean isBanned;
 }

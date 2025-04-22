@@ -17,6 +17,10 @@ import ExhibitDetailsIndexView from '@/views/exhibit/ExhibitDetailsIndexView.vue
 import UserProfileDetailsIndexView from '@/views/user/profile/index/UserProfileDetailsIndexView.vue'
 import SurveyDetailsIndexView from '@/views/feedback/SurveyDetailsIndexView.vue'
 import PanoramaView from '@/views/panorama/PanoramaView.vue'
+import AdminLayout from '@/views/admin/AdminLayout.vue'
+import UserManagement from '@/views/admin/UserManagement.vue'
+import ExhibitManagement from '@/views/admin/ExhibitManagement.vue'
+import SurveyManagement from '@/views/admin/SurveyManagement.vue'
 
 const routes = [
   // 重定向
@@ -170,6 +174,35 @@ const routes = [
       requestAuth: false,
     },
   },
+  {
+    path: '/admin',
+    component: AdminLayout,
+    meta: {
+      requestAuth: true,
+      requireAdmin: true
+    },
+    children: [
+      {
+        path: '',
+        redirect: '/admin/users'
+      },
+      {
+        path: 'users',
+        name: 'admin_users',
+        component: UserManagement
+      },
+      {
+        path: 'exhibits',
+        name: 'admin_exhibits',
+        component: ExhibitManagement
+      },
+      {
+        path: 'surveys',
+        name: 'admin_surveys',
+        component: SurveyManagement
+      }
+    ]
+  },
   // 错误处理
   {
     path: "/:catchAll(.*)",
@@ -187,7 +220,7 @@ router.beforeEach((to, from, next) => {
   const store = require('@/store').default; // 避免循环引入
   // 如果需要授权&&未登录，跳转到登录页面
   if (to.meta.requestAuth && !store.state.user.is_login) {
-    
+    console.log("+++");
     next({name: "user_account_login"})
   } else {
     // 不需要授权||已登录直接打开原页面

@@ -8,6 +8,8 @@ export default {
         token: "",
         is_login: false,
         pulling_info: false, // 正在拉取信息，不展示登录界面
+        is_admin: false,
+        is_banned: false,
     },
     getters: {
     },
@@ -17,10 +19,13 @@ export default {
         // 同步，提供一个字符串函数名和一个回调函数用于修改state
         // commit方式调用
         updateUser(state, user) {
+            console.log("updateUser");
             state.id = user.id;
             state.username = user.username;
             state.photo = user.photo;
-            state.is_login = user.is_login;
+            state.is_admin = user.is_admin == "true";
+            state.is_banned = user.is_banned == "true";
+            state.is_login = true;
         },
         updateToken(state, token) {
             state.token = token;
@@ -32,6 +37,8 @@ export default {
             state.photo = "";
             state.token = "";
             state.is_login = false;
+            state.is_admin = false;
+            state.is_banned = false;
         },
         updatePullingInfo(state, pulling_info) {
             state.pulling_info = pulling_info;
@@ -69,12 +76,13 @@ export default {
                 }
             })
                 .then(resp => {
-                    // console.log("getinfo 响应数据:", resp.data); // 打印响应数据
+                    console.log("getinfo 响应数据:", resp.data); // 打印响应数据
                     if (resp.data.error_message === "success") {
                         context.commit("updateUser", {
                             ...resp.data,
                             is_login: true,
                         });
+                        console.log("updateuser success");
                         if (typeof data.success === 'function') {
                             data.success(resp.data);
                         }

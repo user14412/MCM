@@ -24,6 +24,7 @@ import ContentField from '@/components/ContentField.vue'
 import { useStore } from 'vuex'
 import { ref } from 'vue'
 import router from '@/router/index'
+import { ElMessage } from 'element-plus'
 
 export default {
     components: {
@@ -43,6 +44,13 @@ export default {
             store.commit("updatePullingInfo", true);
             store.dispatch("getinfo",{
                 success(){
+                    // 检查用户是否被封禁
+                    if (store.state.user.is_banned) {
+                        ElMessage.error('您的账号已被封禁');
+                        store.commit("logout");
+                        store.commit("updatePullingInfo", false);
+                        return;
+                    }
                     router.push({name: "home"});
                     // 拉取信息完毕，恢复pulling_info的值
                     store.commit("updatePullingInfo", false);
@@ -62,6 +70,13 @@ export default {
                     store.commit("updatePullingInfo", true);
                     store.dispatch("getinfo", {
                         success() {
+                            // 检查用户是否被封禁
+                            if (store.state.user.is_banned) {
+                                ElMessage.error('您的账号已被封禁');
+                                store.commit("logout");
+                                store.commit("updatePullingInfo", false);
+                                return;
+                            }
                             // 登录成功
                             // 获取用户信息：用户名、头像成功
                             // 跳转到主页
