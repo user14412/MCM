@@ -20,6 +20,17 @@
           <div class="form-text text-end">{{ article.title.length }}/200</div>
         </div>
 
+        <div class="mb-4">
+          <label for="post-type" class="form-label fw-bold">文章类型</label>
+          <select class="form-select" id="post-type" v-model="article.type">
+            <option value="normal">普通文章</option>
+            <option value="news">新闻</option>
+            <option value="guide">指南</option>
+            <option value="introduction">介绍</option>
+            <option value="notice">通知</option>
+          </select>
+        </div>
+
         <div class="mb-4" style="margin-top: -20px;">
           <label class="form-label fw-bold">文章内容</label>
           <QuillEditor ref="quillEditor" v-model:content="article.content" contentType="html" :options="editorOptions"
@@ -90,6 +101,7 @@ export default {
     const article = ref({
       title: '', // v-model
       content: '', // v-model
+      type: 'normal', // 新增类型字段
     });
 
     const loading = ref(false);
@@ -209,6 +221,7 @@ export default {
             {
               title: article.value.title,
               content: article.value.content,
+              type: article.value.type,
             },
             // config
             {
@@ -284,6 +297,7 @@ export default {
     const resetForm = () => {
       article.value.title = '';
       article.value.content = '';
+      article.value.type = 'normal';
       // TODO这里可以添加重置后的逻辑，例如跳转页面
     };
 

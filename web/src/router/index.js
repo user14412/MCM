@@ -204,6 +204,11 @@ const routes = [
         component: () => import('@/views/admin/components/FeedbackManagement.vue')
       },
       {
+        path: 'messages',
+        name: 'admin_messages',
+        component: () => import('@/views/admin/components/MessageManagement.vue')
+      },
+      {
         path: 'statistics',
         name: 'admin_statistics',
         component: () => import('@/views/admin/components/StatisticsView.vue')

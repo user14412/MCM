@@ -14,12 +14,16 @@
           <el-icon><Picture /></el-icon>
           <span>展品管理</span>
         </el-menu-item>
+        <el-menu-item index="messages">
+          <el-icon><ChatDotRound /></el-icon>
+          <span>留言管理</span>
+        </el-menu-item>
         <el-menu-item index="surveys">
           <el-icon><Document /></el-icon>
           <span>问卷管理</span>
         </el-menu-item>
         <el-menu-item index="feedbacks">
-          <el-icon><ChatDotRound /></el-icon>
+          <el-icon><MessageBox /></el-icon>
           <span>反馈管理</span>
         </el-menu-item>
         <el-menu-item index="statistics">
@@ -37,7 +41,7 @@
 <script setup>
 import { computed, markRaw, defineAsyncComponent } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { User, Picture, Document, ChatDotRound, DataLine } from '@element-plus/icons-vue'
+import { User, Picture, Document, ChatDotRound, DataLine, MessageBox } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -48,6 +52,7 @@ const components = {
   exhibits: markRaw(defineAsyncComponent(() => import('./components/ExhibitManagement.vue'))),
   surveys: markRaw(defineAsyncComponent(() => import('./components/SurveyManagement.vue'))),
   feedbacks: markRaw(defineAsyncComponent(() => import('./components/FeedbackManagement.vue'))),
+  messages: markRaw(defineAsyncComponent(() => import('./components/MessageManagement.vue'))),
   statistics: markRaw(defineAsyncComponent(() => import('./components/StatisticsView.vue')))
 }
 

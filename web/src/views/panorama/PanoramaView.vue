@@ -2,9 +2,6 @@
     <div class="panorama-container d-flex justify-content-center align-items-center min-vh-100">
         <div id="panorama">
             <div class="visit-count">访问次数: {{ visitCount }}</div>
-            <div class="bgm-control ctrl" @click="toggleBgm" :title="isBgmPlaying ? '暂停背景音乐' : '播放背景音乐'">
-                {{ isBgmPlaying ? '&#9208;' : '&#9654;' }}
-            </div>
             <div id="controls">
                 <div class="ctrl" id="pan-up">&#9650;</div>
                 <div class="ctrl" id="pan-down">&#9660;</div>
@@ -14,12 +11,41 @@
                 <div class="ctrl" id="zoom-out">&minus;</div>
                 <div class="ctrl" id="fullscreen">&#x2922;</div>
             </div>
+            
+            <!-- 留言弹幕区 -->
+            <div class="barrage-container">
+                <transition-group name="scroll-fade" tag="div" v-if="showMessages">
+                    <div v-for="message in visibleMessages" :key="message.id" class="barrage-item">
+                        <span class="barrage-content">{{ message.content }}</span>
+                    </div>
+                </transition-group>
+                <!-- 输入区 -->
+                <div class="barrage-input-row">
+                    <input v-model="newMessage" type="text" class="barrage-input" placeholder="在此输入您的留言" :maxlength="2000" @keyup.enter="submitMessage" />
+                    <button class="barrage-send" @click="submitMessage" :disabled="!newMessage.trim()">发送</button>
+                    <span class="barrage-toggle" :title="showMessages ? '关闭留言' : '开启留言'" @click="toggleMessages">
+                        <svg v-if="showMessages" width="22" height="22" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 235.8 64 448c0 97.2 53.2 185.2 140.2 247.2-4.2 31.2-17.2 77.2-54.2 120.8-6.2 7.2-7.2 17.2-2.2 25.2 5 8.2 14.8 11.2 23.2 7.8 70.2-28.2 124.2-67.2 159.2-97.2 27.2 6.2 55.8 9.2 85.8 9.2 247.4 0 448-171.8 448-384S759.4 64 512 64z" fill="#bbb"/></svg>
+                        <svg v-else width="22" height="22" viewBox="0 0 1024 1024"><path d="M512 64C264.6 64 64 235.8 64 448c0 97.2 53.2 185.2 140.2 247.2-4.2 31.2-17.2 77.2-54.2 120.8-6.2 7.2-7.2 17.2-2.2 25.2 5 8.2 14.8 11.2 23.2 7.8 70.2-28.2 124.2-67.2 159.2-97.2 27.2 6.2 55.8 9.2 85.8 9.2 247.4 0 448-171.8 448-384S759.4 64 512 64z" fill="#eee"/></svg>
+                    </span>
+                    <span class="barrage-music" :title="isBgmPlaying ? '暂停背景音乐' : '播放背景音乐'" @click="toggleBgm">
+                        <svg v-if="isBgmPlaying" width="22" height="22" viewBox="0 0 48 48">
+                            <circle cx="24" cy="24" r="22" fill="#eee"/>
+                            <rect x="14" y="14" width="6" height="20" rx="2" fill="#333"/>
+                            <rect x="28" y="14" width="6" height="20" rx="2" fill="#333"/>
+                        </svg>
+                        <svg v-else width="22" height="22" viewBox="0 0 48 48">
+                            <circle cx="24" cy="24" r="22" fill="#eee"/>
+                            <polygon points="17,14 36,24 17,34" fill="#333"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
         </div>
     </div>
 </template>
 
 <script>
-import { onMounted, ref, onUnmounted } from 'vue';
+import { onMounted, ref, onUnmounted, computed } from 'vue';
 import { useRoute } from 'vue-router'; // 导入 useRoute
 import axios from 'axios'; // 导入 axios
 import { useStore } from 'vuex';
@@ -32,8 +58,30 @@ export default {
         const visitCount = ref(0); // 添加 ref 来存储访问次数
         const bgmAudio = ref(null); // 背景音乐 Audio 对象
         const isBgmPlaying = ref(false); // 背景音乐播放状态
+        const showMessages = ref(true);
+        const messages = ref([]);
+        const newMessage = ref('');
+        const messageInterval = ref(null);
+        const scrollIndex = ref(0);
+        const visibleCount = 5; // 一次显示5条
+        let scrollTimer = null;
 
         let currentAudio = ref(null); // 使用 ref 来跟踪当前播放的音频
+
+        // 自动滚动可见留言
+        const visibleMessages = computed(() => {
+            if (messages.value.length <= visibleCount) {
+                return messages.value;
+            }
+            let start = scrollIndex.value;
+            let end = start + visibleCount;
+            if (end <= messages.value.length) {
+                return messages.value.slice(start, end);
+            } else {
+                // 拼接头部
+                return messages.value.slice(start).concat(messages.value.slice(0, end - messages.value.length));
+            }
+        });
 
         // 热点点击处理函数
         const handleInfoHotspotClick = (event, args) => {
@@ -83,18 +131,81 @@ export default {
             // 状态会在 audio 元素的 onplay/onpause 事件中更新
         };
 
+        // 切换弹幕显示
+        const toggleMessages = () => {
+            showMessages.value = !showMessages.value;
+        };
+
+        // 格式化时间
+        const formatTime = (timeStr) => {
+            const date = new Date(timeStr);
+            return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+        };
+
+        // 获取留言列表
+        const fetchMessages = async () => {
+            console.log("Fetching messages...");
+            try {
+                const response = await axios({
+                    url: 'http://127.0.0.1:3000/panorama/message/get/',
+                    method: 'GET',
+                    params: {
+                        scene: sceneId
+                    },
+                    headers: {
+                        Authorization: "Bearer " + store.state.user.token,
+                    }
+                });
+                if (response.data.error_message === 'success') {
+                    messages.value = response.data.messages;
+                    // 重置滚动索引，防止新留言时错位
+                    scrollIndex.value = 0;
+                }
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        };
+
+        // 提交新留言
+        const submitMessage = async () => {
+            console.log("Submitting message...");
+            if (!newMessage.value.trim()) return;
+            
+            try {
+                const response = await axios({
+                    url: 'http://127.0.0.1:3000/panorama/message/add/',
+                    method: 'POST',
+                    params: {
+                        content: newMessage.value,
+                        scene: sceneId
+                    },
+                    headers: {
+                        Authorization: "Bearer " + store.state.user.token,
+                    }
+                });
+                
+                if (response.data.error_message === 'success') {
+                    newMessage.value = '';
+                    fetchMessages(); // 刷新留言列表
+                    window.alert('留言发送成功，正在审核');
+                }
+            } catch (error) {
+                console.error('Error submitting message:', error);
+            }
+        };
+
         const initPannellum = () => {
             const viewer = window.pannellum.viewer('panorama', {
                 "default": {
                     "autoLoad": true, // 自动加载
                     "firstScene": `${sceneId}`, // 使用从路由获取的 sceneId
-                    "author": "zanyyan123",
+                    // "author": "zanyyan123",
                     "sceneFadeDuration": 1000, // 场景过渡1s
                     "showControls": false,
                 },
                 "scenes": {
                     "scene1": { // sceneId
-                        "title": "远古海洋",
+                        // "title": "远古海洋",
                         "hfov": 110,
                         "pitch": -3,
                         "yaw": 117,
@@ -132,7 +243,7 @@ export default {
                     },
 
                     "scene2": {
-                        "title": "近代海洋",
+                        // "title": "近代海洋",
                         "hfov": 110,
                         "yaw": 5,
                         "type": "equirectangular",
@@ -150,7 +261,7 @@ export default {
                         ]
                     },
                     "scene3": {
-                        "title": "现代海洋",
+                        // "title": "现代海洋",
                         "hfov": 0,
                         "yaw": 0,
                         "type": "equirectangular",
@@ -303,6 +414,16 @@ export default {
                console.warn("Background music URL is not set or is invalid.");
             }
             // --- 背景音乐初始化结束 ---
+
+            fetchMessages();
+            // 每30秒刷新一次留言
+            messageInterval.value = setInterval(fetchMessages, 30000);
+            // 自动滚动留言
+            scrollTimer = setInterval(() => {
+                if (messages.value.length > visibleCount) {
+                    scrollIndex.value = (scrollIndex.value + 1) % messages.value.length;
+                }
+            }, 2000);
         })
 
         // Hot spot creation function
@@ -326,6 +447,10 @@ export default {
                 bgmAudio.value = null;
                 console.log("Background music resources released.");
             }
+            if (messageInterval.value) {
+                clearInterval(messageInterval.value);
+            }
+            if (scrollTimer) clearInterval(scrollTimer);
         });
 
         return {
@@ -333,6 +458,13 @@ export default {
             visitCount, // 返回 visitCount 使其在模板中可用
             isBgmPlaying, // 返回背景音乐播放状态
             toggleBgm,    // 返回切换函数
+            showMessages,
+            messages,
+            newMessage,
+            toggleMessages,
+            submitMessage,
+            formatTime,
+            visibleMessages
         }
     }
 }
@@ -356,33 +488,6 @@ export default {
     border-radius: 5px;
     z-index: 3; /* 确保在控制栏之上 */
     font-size: 14px;
-}
-
-/* 背景音乐控制按钮样式 */
-.bgm-control {
-    position: absolute;
-    left: 10px; /* 距离左侧距离 */
-    top: 50%;   /* 垂直居中 */
-    transform: translateY(-50%); /* 精确垂直居中 */
-    z-index: 3; /* 确保在访问次数和其他控件之上 */
-    cursor: pointer;
-    background: rgba(0, 0, 0, 0.5); /* 半透明背景 */
-    color: white;
-    border-radius: 50%; /* 圆形按钮 */
-    width: 35px;  /* 按钮宽度 */
-    height: 35px; /* 按钮高度 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 18px; /* 图标大小 */
-    line-height: 1; /* 避免额外行高影响居中 */
-    border: 1px solid rgba(255, 255, 255, 0.5); /* 可选：添加边框 */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* 可选：添加阴影 */
-    transition: background-color 0.2s ease; /* 平滑过渡效果 */
-}
-
-.bgm-control:hover {
-    background: rgba(0, 0, 0, 0.7); /* 悬停时加深背景 */
 }
 
 /* 控制栏 */
@@ -410,40 +515,116 @@ export default {
     background: rgba(200, 200, 200, 1);
 }
 
-/* 热点 */
-/* .custom-hotspot {
-    height: 50px;
-    width: 50px;
-    background: #f00;
-}
-
-div.custom-tooltip span {
-    visibility: hidden;
+/* 留言弹幕区样式 */
+.barrage-container {
     position: absolute;
-    border-radius: 3px;
-    background-color: #fff;
-    color: #000;
-    text-align: center;
-    max-width: 200px;
-    padding: 5px 10px;
-    margin-left: -220px;
-    cursor: default;
+    left: 20px;
+    bottom: 30px;
+    width: 320px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 }
 
-div.custom-tooltip:hover span {
-    visibility: visible;
+.barrage-item {
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    background: rgba(40, 40, 40, 0.7);
+    color: #fff;
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 18px;
+    max-width: 90%;
+    word-break: break-all;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
-div.custom-tooltip:hover span:after {
-    content: '';
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-width: 10px;
-    border-style: solid;
-    border-color: #fff transparent transparent transparent;
-    bottom: -20px;
-    left: -10px;
-    margin: 0 50%;
-} */
+.barrage-content {
+    display: block;
+}
+
+/* 输入区样式 */
+.barrage-input-row {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background: rgba(40, 40, 40, 0.5);
+    border-radius: 22px;
+    padding: 4px 10px 4px 16px;
+    margin-top: 8px;
+}
+
+.barrage-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    height: 32px;
+    line-height: 32px;
+    padding: 0;
+}
+
+.barrage-send {
+    background: #0068ff;
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 0 12px;
+    height: 32px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 40px;
+}
+.barrage-send:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.barrage-music {
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    justify-content: center;
+    background: rgba(0,0,0,0.10);
+    transition: background 0.2s;
+}
+.barrage-music:hover {
+    background: rgba(0,104,255,0.15);
+}
+
+.barrage-toggle {
+    margin-left: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    justify-content: center;
+    transition: background 0.2s;
+}
+.barrage-toggle:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.scroll-fade-enter-active, .scroll-fade-leave-active {
+  transition: all 0.5s;
+}
+.scroll-fade-enter-from, .scroll-fade-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
 </style>

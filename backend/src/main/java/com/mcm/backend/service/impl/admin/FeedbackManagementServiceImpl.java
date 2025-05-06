@@ -11,6 +11,7 @@ import com.mcm.backend.service.admin.FeedbackManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,10 @@ public class FeedbackManagementServiceImpl implements FeedbackManagementService 
             .collect(Collectors.toList());
         
         // 批量查询用户信息
-        List<User> users = userMapper.selectBatchIds(userIds);
+        List<User> users = new ArrayList<>();
+        if (!userIds.isEmpty()) {
+            users = userMapper.selectBatchIds(userIds);
+        }
         Map<Integer, User> userMap = users.stream()
             .collect(Collectors.toMap(User::getId, user -> user));
         

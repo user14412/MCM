@@ -31,12 +31,13 @@ public class AddArticleServiceImpl implements AddArticleService {
 
         String title = data.getTitle();
         String content = data.getContent();
+        String type = data.getType();
 
         Integer userId = user.getId();
         String username = user.getUsername();
         String photo = user.getPhoto();
         Date now = new Date();
-        Article article = new Article(null, userId, username, photo, title, content, now);
+        Article article = new Article(null, userId, username, photo, title, content, now, type);
         articleMapper.insert(article);
 //        System.out.println("插入文章：" + article);
         return "add article success";
