@@ -10,7 +10,7 @@ import { useRouter } from 'vue-router';
 export default {
     setup() {
         const router = useRouter();
-        const surveyId = 4;
+        const surveyId = 2;
 
         router.push({path: `/survey/${surveyId}`});
 
